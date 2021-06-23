@@ -8,7 +8,12 @@ import { createMuiTheme } from "@material-ui/core";
 import purple from "@material-ui/core/colors/purple";
 
 import { ThemeProvider } from "@material-ui/core";
-import { withStyles } from "@material-ui/core";
+
+import { GridList } from "@material-ui/core";
+import { GridListTile } from "@material-ui/core";
+import { Card } from "@material-ui/core";
+import { CardActions } from "@material-ui/core";
+import { CardContent } from "@material-ui/core";
 
 function App() {
   const [exercises, setExercises] = useState<Array<Exercise>>([]);
@@ -81,56 +86,107 @@ function App() {
     },
   });
 
+  const LABELS: string[] = [
+    "High Digit",
+    "Number of Digit",
+    "Number of Exercise",
+  ];
+
+  interface SettingProps {
+    label: string;
+    value: number;
+  }
+
+  const settings: SettingProps[] = [
+    { label: LABELS[0], value: highDigit },
+    { label: LABELS[1], value: numberOfDigits },
+    { label: LABELS[2], value: numberOfExercises },
+  ];
+
+  const handleChange = (label: string, str: string) => {
+    const value = parseInt(str);
+    if (label === LABELS[0]) {
+      setHighDigit(value);
+    } else if (label === LABELS[1]) {
+      setNumberOfDigits(value);
+    } else {
+      setNumberOfExercises(value);
+    }
+  };
+
+  const getMax = (label: string) => {
+    if (label === LABELS[0]) {
+      return 100;
+    } else if (label === LABELS[1]) {
+      return 5;
+    } else {
+      return 15;
+    }
+  };
+
+  const getMin = (label: string) => {
+    if (label === LABELS[0]) {
+      return 0;
+    } else if (label === LABELS[1]) {
+      return 2;
+    } else {
+      return 1;
+    }
+  };
+
   return (
     <>
       <ThemeProvider theme={theme}>
         <article>
-          <Container maxWidth="md">
+          <Container maxWidth="xl">
             <Exercises exercises={exercises} solve={solve} />
           </Container>
 
           <Container
-            maxWidth="md"
+            maxWidth="xl"
             style={{
               paddingTop: "10px",
             }}
           >
-            <TextField
-              label="High Digit"
-              type="number"
-              InputLabelProps={{ shrink: true }}
-              variant="filled"
-              value={highDigit}
-              onChange={(e) => setHighDigit(parseInt(e.currentTarget.value))}
-            />
-            <TextField
-              label="Number "
-              type="number"
-              InputLabelProps={{ shrink: true }}
-              variant="filled"
-              value={numberOfDigits}
-              onChange={(e) =>
-                setNumberOfDigits(parseInt(e.currentTarget.value))
-              }
-            />
-
-            <TextField
-              label="Number of Exercise"
-              type="number"
-              InputLabelProps={{ shrink: true }}
-              variant="filled"
-              value={numberOfExercises}
-              onChange={(e) =>
-                setNumberOfExercises(parseInt(e.currentTarget.value))
-              }
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => generateExercises()}
-            >
-              GENERATE EXERCISE
-            </Button>
+            <Card>
+              <CardContent>
+                <GridList cols={4} spacing={30} cellHeight={"auto"}>
+                  {settings.map((setting) => (
+                    <GridListTile cols={1}>
+                      <CardActions>
+                        <TextField
+                          label={setting.label}
+                          type="number"
+                          InputLabelProps={{ shrink: true }}
+                          variant="filled"
+                          value={setting.value}
+                          fullWidth
+                          inputProps={{
+                            step: 1,
+                            min: getMin(setting.label),
+                            max: getMax(setting.label),
+                          }}
+                          onChange={(e) =>
+                            handleChange(setting.label, e.currentTarget.value)
+                          }
+                        />
+                      </CardActions>
+                    </GridListTile>
+                  ))}
+                  <GridListTile cols={1}>
+                    <CardActions>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => generateExercises()}
+                      >
+                        GENERATE EXERCISE
+                      </Button>
+                    </CardActions>
+                  </GridListTile>
+                </GridList>
+              </CardContent>
+            </Card>
           </Container>
         </article>
       </ThemeProvider>

@@ -1,3 +1,4 @@
+import { Box } from "@material-ui/core";
 import {
   Card,
   CardContent,
@@ -37,11 +38,11 @@ const useStyles = makeStyles({
     alignItems: "center",
   },
   calculation: {
-    flex: 0.3,
+    flex: 0.5,
     textAlign: "end",
   },
   answer: {
-    flex: 0.3,
+    flex: 0.5,
     display: "flex",
     alignItems: "center",
     marginLeft: "10px",
@@ -105,12 +106,12 @@ function Exercises({ exercises, solve }: ExercisesProps) {
         >
           <form noValidate autoComplete="off">
             <Container className={classes.exercise}>
-              <div className={classes.calculation}>
+              <Box className={classes.calculation}>
                 <Typography variant="h3">
                   {exercise.operators.join(" ")} =
                 </Typography>
-              </div>
-              <div className={clsx(classes.answer)}>
+              </Box>
+              <Box className={clsx(classes.answer)}>
                 <TextField
                   required
                   name={exercise.id}
@@ -129,13 +130,13 @@ function Exercises({ exercises, solve }: ExercisesProps) {
                     },
                   }}
                 />
-                <div>
+                <Box>
                   <SendIcon
                     className={classes.icon}
                     onClick={() => submitAnswer(exercise.id)}
                   />
-                </div>
-              </div>
+                </Box>
+              </Box>
             </Container>
           </form>
         </CardContent>
