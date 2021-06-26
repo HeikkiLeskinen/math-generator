@@ -1,5 +1,5 @@
 import "./App.css";
-import { Button, Container, Paper, TextField } from "@material-ui/core";
+import { Button, Container, TextField } from "@material-ui/core";
 import { useState } from "react";
 import { evaluate } from "mathjs";
 import { v4 as uuidv4 } from "uuid";
@@ -54,12 +54,11 @@ function App() {
   };
 
   const allSumsPositive = (operators: string[]): boolean => {
-    if (operators.length === 0) {
+    if (operators.length < 3) {
       return true;
     }
 
-    const [head, ...tail] = operators;
-    return evaluate(operators.join("")) >= 0 && allSumsPositive(tail);
+    return evaluate(operators.slice(0, 3).join("")) >= 0 && allSumsPositive(operators.slice(2));
   };
 
   function* assignmentGenerator(): Generator<string[], any, number> {
