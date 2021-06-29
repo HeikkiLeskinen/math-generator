@@ -3,23 +3,41 @@ import { Button, Container, TextField } from "@material-ui/core";
 import { useState } from "react";
 import { evaluate } from "mathjs";
 import { v4 as uuidv4 } from "uuid";
-import Exercises, { Exercise } from "./Exercises";
 import { createMuiTheme } from "@material-ui/core";
 import purple from "@material-ui/core/colors/purple";
-
 import { ThemeProvider } from "@material-ui/core";
-
 import { GridList } from "@material-ui/core";
 import { GridListTile } from "@material-ui/core";
 import { Card } from "@material-ui/core";
 import { CardActions } from "@material-ui/core";
 import { CardContent } from "@material-ui/core";
+import Exercises, { Exercise } from "./components/Exercises/Exercises";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import TYPES from "./redux/types";
+import { GameState } from "./redux/reducer";
 
 function App() {
   const [exercises, setExercises] = useState<Array<Exercise>>([]);
   const [highDigit, setHighDigit] = useState<number>(10);
   const [numberOfExercises, setNumberOfExercises] = useState<number>(5);
   const [numberOfDigits, setNumberOfDigits] = useState<number>(2);
+
+  const { score, running } = useSelector((state: GameState) => {
+    return { score: state.score, running:state.running};
+  });
+
+  const dispatch = useDispatch();
+  
+  useEffect(() => {
+    const incorrectExercises: Array<Exercise> = exercises
+    .filter((e) => e.correct !== true)
+  
+    if (running && incorrectExercises.length === 0
+      ){
+       dispatch({type: TYPES.IncreaseScore})
+    }
+  }, [dispatch, exercises, running], )
 
   const solve = (id: string, answer: number) => {
     setExercises(
@@ -42,6 +60,7 @@ function App() {
       : "+-*:".charAt(Math.floor(Math.random() * 2));
 
   const generateExercises = () => {
+    dispatch({ type: TYPES.GameRunning})
     const it = assignmentGenerator();
     setExercises(
       [...Array(numberOfExercises)].map((_, i) => {
@@ -136,6 +155,7 @@ function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
+        <div>SCORE: {score}</div>
         <article>
           <Container maxWidth="xl">
             <Exercises exercises={exercises} solve={solve} />

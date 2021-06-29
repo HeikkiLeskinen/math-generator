@@ -10,7 +10,7 @@ import {
 import SendIcon from "@material-ui/icons/Send";
 import clsx from "clsx";
 import React, { useState } from "react";
-import "./App.css";
+
 
 export interface Exercise {
   id: string;
