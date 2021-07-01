@@ -1,11 +1,12 @@
 import "./App.css";
 import { Button, Container, TextField } from "@material-ui/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { evaluate } from "mathjs";
 import { v4 as uuidv4 } from "uuid";
 import Exercises, { Exercise } from "./Exercises";
 import { createMuiTheme } from "@material-ui/core";
 import purple from "@material-ui/core/colors/purple";
+import { useDispatch, useSelector } from 'react-redux';
 
 import { ThemeProvider } from "@material-ui/core";
 
@@ -14,12 +15,30 @@ import { GridListTile } from "@material-ui/core";
 import { Card } from "@material-ui/core";
 import { CardActions } from "@material-ui/core";
 import { CardContent } from "@material-ui/core";
+import { GameState } from "./redux/reducers";
 
 function App() {
   const [exercises, setExercises] = useState<Array<Exercise>>([]);
   const [highDigit, setHighDigit] = useState<number>(10);
   const [numberOfExercises, setNumberOfExercises] = useState<number>(5);
   const [numberOfDigits, setNumberOfDigits] = useState<number>(2);
+
+  const { score, running } = useSelector((state: GameState) => {
+    return {
+      score: state.score,
+      running: state.running
+      };
+  });
+
+  useEffect(() => {
+    console.log(running, exercises.length)
+    if(running && exercises.length === 0){
+      console.log('No more exercise')
+    }
+  }, [exercises])
+
+  const dispatch = useDispatch();
+
 
   const solve = (id: string, answer: number) => {
     setExercises(
@@ -43,6 +62,7 @@ function App() {
 
   const generateExercises = () => {
     const it = assignmentGenerator();
+    dispatch({type:"StartGame" })
     setExercises(
       [...Array(numberOfExercises)].map((_, i) => {
         return {
@@ -147,7 +167,7 @@ function App() {
               paddingTop: "10px",
             }}
           >
-            <Card>
+              <Card>
               <CardContent>
                 <GridList cols={4} spacing={30} cellHeight={"auto"}>
                   {settings.map((setting) => (
