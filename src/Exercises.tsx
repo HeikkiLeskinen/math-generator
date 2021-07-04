@@ -91,6 +91,12 @@ function Exercises({ exercises, solve }: ExercisesProps) {
     setAnswers(answers.set(name, value));
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent, id: string) => {
+    if(e.key === 'Enter'){
+      submitAnswer(id);
+    }
+  }
+
   const submitAnswer = (id: string) => {
     solve(id, answers.get(id));
   };
@@ -104,7 +110,6 @@ function Exercises({ exercises, solve }: ExercisesProps) {
             [classes.inCorrect]: exercise.correct === false,
           })}
         >
-          <form noValidate autoComplete="off">
             <Container className={classes.exercise}>
               <Box className={classes.calculation}>
                 <Typography variant="h3">
@@ -117,6 +122,7 @@ function Exercises({ exercises, solve }: ExercisesProps) {
                   name={exercise.id}
                   variant="outlined"
                   onChange={updateAnswer}
+                  onKeyPress={e => handleKeyPress(e, exercise.id)}
                   InputProps={{
                     className: clsx(classes.input, {
                       [(classes.inCorrect, classes.white)]:
@@ -138,7 +144,6 @@ function Exercises({ exercises, solve }: ExercisesProps) {
                 </Box>
               </Box>
             </Container>
-          </form>
         </CardContent>
       </Card>
     ));
