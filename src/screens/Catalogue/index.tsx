@@ -1,3 +1,4 @@
+
 import { Box } from "@material-ui/core";
 import {
   Card,
@@ -10,6 +11,9 @@ import {
 import SendIcon from "@material-ui/icons/Send";
 import clsx from "clsx";
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { GameState } from "../../redux/reducers";
+import TYPES from "../../redux/types";
 import "./App.css";
 
 export interface Exercise {
@@ -81,9 +85,24 @@ const useStyles = makeStyles({
   },
 });
 
-function Exercises({ exercises, solve }: ExercisesProps) {
+export interface Exercise {
+  id: string;
+  correct?: boolean;
+  operators: Array<string>;
+}
+
+export function Catalogue() {
+
   const classes = useStyles();
   const [answers, setAnswers] = useState(new Map());
+
+  const { catalogue } = useSelector((state: GameState) => {
+    return {
+      catalogue: state.catalogue
+    };
+  });
+
+  const dispatch = useDispatch();
 
   const updateAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
@@ -98,12 +117,15 @@ function Exercises({ exercises, solve }: ExercisesProps) {
   }
 
   const submitAnswer = (id: string) => {
-    solve(id, answers.get(id));
+    dispatch({
+      type: TYPES.SUBMIT_ANSWER,
+      payload: {id: id, answer: answers.get(id)}
+    });
   };
 
-  const exerciseList = exercises
+  const exerciseList = catalogue.exercises
     .filter((e) => e.correct !== true)
-    .map((exercise) => (
+    .map((exercise, index) => (
       <Card key={exercise.id}>
         <CardContent
           className={clsx(classes.cardRow, {
@@ -118,6 +140,7 @@ function Exercises({ exercises, solve }: ExercisesProps) {
               </Box>
               <Box className={clsx(classes.answer)}>
                 <TextField
+                  inputRef={input => input && index === 0 && input.focus()}
                   required
                   name={exercise.id}
                   variant="outlined"
@@ -150,5 +173,3 @@ function Exercises({ exercises, solve }: ExercisesProps) {
 
   return <div>{exerciseList}</div>;
 }
-
-export default Exercises;
