@@ -1,9 +1,5 @@
 import "./App.css";
 import { Button, Container, TextField } from "@material-ui/core";
-import { useEffect, useState } from "react";
-import { evaluate } from "mathjs";
-import { v4 as uuidv4 } from "uuid";
-import Exercises, { Exercise } from "./Exercises";
 import { createMuiTheme } from "@material-ui/core";
 import purple from "@material-ui/core/colors/purple";
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,83 +12,20 @@ import { Card } from "@material-ui/core";
 import { CardActions } from "@material-ui/core";
 import { CardContent } from "@material-ui/core";
 import { GameState } from "./redux/reducers";
+import TYPES from "./redux/types";
+import { Catalogue } from "./screens/Catalogue";
 
 function App() {
-  const [exercises, setExercises] = useState<Array<Exercise>>([]);
-  const [highDigit, setHighDigit] = useState<number>(10);
-  const [numberOfExercises, setNumberOfExercises] = useState<number>(5);
-  const [numberOfDigits, setNumberOfDigits] = useState<number>(2);
 
-  const { score, running } = useSelector((state: GameState) => {
+  const { config, score, running } = useSelector((state: GameState) => {
     return {
+      config: state.config,
       score: state.score,
       running: state.running
-      };
+    };
   });
 
-  useEffect(() => {
-    console.log(running, exercises.length)
-    if(running && exercises.length === 0){
-      console.log('No more exercise')
-    }
-  }, [exercises])
-
   const dispatch = useDispatch();
-
-
-  const solve = (id: string, answer: number) => {
-    setExercises(
-      exercises.map((e) =>
-        e.id === id
-          ? Object.assign({}, e, { correct: correctAnswer(e, answer) })
-          : e
-      )
-    );
-  };
-
-  const correctAnswer = (exercise: Exercise, answer: number) => {
-    const correctAnswer = evaluate(exercise.operators.join(""));
-    return correctAnswer == answer;
-  };
-
-  const randomOperator = (index: number, upTill: number): string =>
-    index % 2 === 0
-      ? Math.floor(Math.random() * upTill).toString()
-      : "+-*:".charAt(Math.floor(Math.random() * 2));
-
-  const generateExercises = () => {
-    const it = assignmentGenerator();
-    dispatch({type:"StartGame" })
-    setExercises(
-      [...Array(numberOfExercises)].map((_, i) => {
-        return {
-          id: uuidv4(),
-          operators: it.next().value,
-        };
-      })
-    );
-  };
-
-  const allSumsPositive = (operators: string[]): boolean => {
-    if (operators.length < 3) {
-      return true;
-    }
-
-    return evaluate(operators.slice(0, 3).join("")) >= 0 && allSumsPositive(operators.slice(2));
-  };
-
-  function* assignmentGenerator(): Generator<string[], any, number> {
-    const number = numberOfDigits + (numberOfDigits - 1);
-    while (true) {
-      const operators = [...Array(number)].map((_, i) =>
-        randomOperator(i, highDigit)
-      );
-
-      if (allSumsPositive(operators)) {
-        yield operators;
-      }
-    }
-  }
 
   const theme = createMuiTheme({
     palette: {
@@ -117,19 +50,27 @@ function App() {
   }
 
   const settings: SettingProps[] = [
-    { label: LABELS[0], value: highDigit },
-    { label: LABELS[1], value: numberOfDigits },
-    { label: LABELS[2], value: numberOfExercises },
+    { label: LABELS[0], value: config.highDigit },
+    { label: LABELS[1], value: config.numberOfDigits },
+    { label: LABELS[2], value: config.numberOfExercises },
   ];
 
+  const isEmpty = (str: string): boolean => {
+    return (!str || str.length === 0 );
+  }
+
   const handleChange = (label: string, str: string) => {
+    if (isEmpty(str)){
+      return;
+    }
+
     const value = parseInt(str);
     if (label === LABELS[0]) {
-      setHighDigit(value);
+      dispatch({type: TYPES.UPDATE_CONFIG, payload: { highDigit: value }});
     } else if (label === LABELS[1]) {
-      setNumberOfDigits(value);
+      dispatch({type: TYPES.UPDATE_CONFIG, payload: { numberOfDigits: value }});
     } else {
-      setNumberOfExercises(value);
+      dispatch({type: TYPES.UPDATE_CONFIG, payload: { numberOfExercises: value }});
     }
   };
 
@@ -158,7 +99,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <article>
           <Container maxWidth="xl">
-            <Exercises exercises={exercises} solve={solve} />
+            <Catalogue/>
           </Container>
 
           <Container
@@ -197,7 +138,7 @@ function App() {
                       <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => generateExercises()}
+                        onClick={() => dispatch({type: TYPES.START_GAME})}
                       >
                         GENERATE EXERCISE
                       </Button>
