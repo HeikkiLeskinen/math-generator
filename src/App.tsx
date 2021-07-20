@@ -1,5 +1,5 @@
 import "./App.css";
-import { Button, Container, TextField } from "@material-ui/core";
+import { Button, Container, Grid, TextField } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core";
 import purple from "@material-ui/core/colors/purple";
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,11 +17,10 @@ import { Catalogue } from "./screens/Catalogue";
 
 function App() {
 
-  const { config, score, running } = useSelector((state: GameState) => {
+  const { config, score } = useSelector((state: GameState) => {
     return {
       config: state.config,
-      score: state.score,
-      running: state.running
+      score: state.score
     };
   });
 
@@ -97,8 +96,19 @@ function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <article>
-          <Container maxWidth="xl">
+      <Grid container spacing={1}>
+        <Grid item xs={2}>
+          <table>
+            <tr>
+              <td>Total Score:</td><td>{score}</td>
+            </tr>
+            <tr>
+              <td>Max Score:</td><td>{config.numberOfExercises}</td>
+            </tr>
+          </table>
+        </Grid>
+        <Grid item xs={10}>
+        <Container maxWidth="xl">
             <Catalogue/>
           </Container>
 
@@ -148,7 +158,9 @@ function App() {
               </CardContent>
             </Card>
           </Container>
-        </article>
+        </Grid>
+      </Grid>
+
       </ThemeProvider>
     </>
   );

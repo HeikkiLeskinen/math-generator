@@ -43,22 +43,29 @@ export const gameReducer = (
                     ...action.payload
                 }
             }
-        case TYPES.INCREASE_SCORE:
-            return {
-                ...state,
-                score: action.payload.amount + state.score,
-                running:false
-            };
         case TYPES.SUBMIT_ANSWER:
             const {id, answer} = action.payload
-            const catalogue = evaluateSolution(state.catalogue, id, answer)
+            const exercise = state.catalogue.exercises
+                .filter(e => e.id === id)
+                .map(e => Object.assign({}, e, { correct: correctAnswer(e, answer) }))[0];
 
-            return {
-                ...state,
-                score: 0,
-                running: true,
-                catalogue: catalogue
+            if (exercise){
+
+                const catalogue = {
+                    exercises: state.catalogue.exercises.map(e => exercise.id === e.id ? exercise : e)
+                }
+                const currentScore = exercise.correct ? state.score + 1 : state.score - 1
+
+                return {
+                    ...state,
+                    score: currentScore,
+                    running: true,
+                    catalogue: catalogue
+                }
+            } else {
+                return state;
             }
+
         default:
             return state;
     }
