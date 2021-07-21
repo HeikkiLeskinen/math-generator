@@ -14,15 +14,19 @@ import { CardContent } from "@material-ui/core";
 import { GameState } from "./redux/reducers";
 import TYPES from "./redux/types";
 import { Catalogue } from "./screens/Catalogue";
+import clsx from "clsx";
 
 function App() {
 
-  const { config, score } = useSelector((state: GameState) => {
+  const { config, score, targetReached } = useSelector((state: GameState) => {
     return {
       config: state.config,
-      score: state.score
+      score: state.score,
+      targetReached: state.targetReached !== undefined ? state.targetReached : true
     };
   });
+
+  const classes = useStyles();
 
   const dispatch = useDispatch();
 
@@ -97,16 +101,6 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
       <Grid container spacing={1}>
-        <Grid item xs={2}>
-          <table>
-            <tr>
-              <td>Total Score:</td><td>{score}</td>
-            </tr>
-            <tr>
-              <td>Max Score:</td><td>{config.numberOfExercises}</td>
-            </tr>
-          </table>
-        </Grid>
         <Grid item xs={10}>
         <Container maxWidth="xl">
             <Catalogue/>
@@ -159,6 +153,18 @@ function App() {
             </Card>
           </Container>
         </Grid>
+        <Grid item xs={2}>
+          <table>
+            <tr className={clsx({
+              [classes.targetReached] : targetReached === false
+            })}>
+              <td>Total Score:</td><td>{score}</td>
+            </tr>
+            <tr>
+              <td>Max Score:</td><td>{config.numberOfExercises}</td>
+            </tr>
+          </table>
+        </Grid>
       </Grid>
 
       </ThemeProvider>
@@ -167,3 +173,7 @@ function App() {
 }
 
 export default App;
+function useStyles() {
+  throw new Error("Function not implemented.");
+}
+
