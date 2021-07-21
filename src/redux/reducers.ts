@@ -1,6 +1,6 @@
 import { evaluate } from 'mathjs';
 import { v4 as uuidv4 } from 'uuid';
-import { Catalogue, Config, Category, Exercise } from '../domain';
+import { Catalogue, Config, Category, Exercise } from '../domain/index';
 import {Actions} from './actions';
 import TYPES from './types';
 
@@ -10,6 +10,7 @@ export const initialState: GameState = {
     config: {
         numberOfExercises: 10,
         numberOfDigits: 3,
+        target: 70,
         highDigit: 10
     },
     catalogue: {exercises: []},
@@ -17,6 +18,7 @@ export const initialState: GameState = {
 
 export interface GameState {
     score: number;
+    targetReached?: boolean;
     running: boolean;
     config: Config;
     catalogue: Catalogue;
@@ -55,10 +57,13 @@ export const gameReducer = (
                     exercises: state.catalogue.exercises.map(e => exercise.id === e.id ? exercise : e)
                 }
                 const currentScore = exercise.correct ? state.score + 1 : state.score - 1
+                const remainingExercises = catalogue.exercises.filter(e => e.correct !== true).length;
+                const targetReached = remainingExercises !== 0 || 100 * (currentScore / state.config.numberOfExercises) >= state.config.target;
 
                 return {
                     ...state,
                     score: currentScore,
+                    targetReached: targetReached,
                     running: true,
                     catalogue: catalogue
                 }
@@ -84,16 +89,6 @@ const generateExercises = (config: Config): Catalogue => {
         })
     };
 };
-
-const evaluateSolution = (catalogue: Catalogue, id: string, answer: number): Catalogue => {
-    return {
-        exercises: catalogue.exercises.map((e) =>
-            e.id === id
-                ? Object.assign({}, e, { correct: correctAnswer(e, answer) })
-                : e
-            )
-    }
-  };
 
 const correctAnswer = (exercise: Exercise, answer: number) => {
     const correctAnswer = evaluate(exercise.operators.join(""));

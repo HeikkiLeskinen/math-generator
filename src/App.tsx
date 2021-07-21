@@ -1,5 +1,5 @@
 import "./App.css";
-import { Button, Container, Grid, TextField } from "@material-ui/core";
+import { Button, Container, Grid, makeStyles, TextField } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core";
 import purple from "@material-ui/core/colors/purple";
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,15 +14,27 @@ import { CardContent } from "@material-ui/core";
 import { GameState } from "./redux/reducers";
 import TYPES from "./redux/types";
 import { Catalogue } from "./screens/Catalogue";
+import clsx from "clsx";
+
+const useStyles = makeStyles({
+  targetFailed: {
+    backgroundColor: "#ef5350",
+    color: "#fff",
+    textShadow: "0 0.0625rem 0 rgb(0 0 0 / 15%)",
+  }
+})
 
 function App() {
 
-  const { config, score } = useSelector((state: GameState) => {
+  const { config, score, targetReached } = useSelector((state: GameState) => {
     return {
       config: state.config,
-      score: state.score
+      score: state.score,
+      targetReached: state.targetReached !== undefined ? state.targetReached : true
     };
   });
+
+  const classes = useStyles();
 
   const dispatch = useDispatch();
 
@@ -41,6 +53,7 @@ function App() {
     "High Digit",
     "Number of Digit",
     "Number of Exercise",
+    "Target (%)",
   ];
 
   interface SettingProps {
@@ -52,6 +65,7 @@ function App() {
     { label: LABELS[0], value: config.highDigit },
     { label: LABELS[1], value: config.numberOfDigits },
     { label: LABELS[2], value: config.numberOfExercises },
+    { label: LABELS[3], value: config.target },
   ];
 
   const isEmpty = (str: string): boolean => {
@@ -68,9 +82,12 @@ function App() {
       dispatch({type: TYPES.UPDATE_CONFIG, payload: { highDigit: value }});
     } else if (label === LABELS[1]) {
       dispatch({type: TYPES.UPDATE_CONFIG, payload: { numberOfDigits: value }});
-    } else {
+    } else if (label === LABELS[2]) {
       dispatch({type: TYPES.UPDATE_CONFIG, payload: { numberOfExercises: value }});
-    }
+    } else {
+      dispatch({type: TYPES.UPDATE_CONFIG, payload: { target: value }});
+  }
+
   };
 
   const getMax = (label: string) => {
@@ -97,16 +114,6 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
       <Grid container spacing={1}>
-        <Grid item xs={2}>
-          <table>
-            <tr>
-              <td>Total Score:</td><td>{score}</td>
-            </tr>
-            <tr>
-              <td>Max Score:</td><td>{config.numberOfExercises}</td>
-            </tr>
-          </table>
-        </Grid>
         <Grid item xs={10}>
         <Container maxWidth="xl">
             <Catalogue/>
@@ -159,6 +166,18 @@ function App() {
             </Card>
           </Container>
         </Grid>
+        <Grid item xs={2}>
+          <table>
+            <tr className={clsx({
+              [classes.targetFailed] : targetReached === false
+            })}>
+              <td>Total Score:</td><td>{score}</td>
+            </tr>
+            <tr>
+              <td>Max Score:</td><td>{config.numberOfExercises}</td>
+            </tr>
+          </table>
+        </Grid>
       </Grid>
 
       </ThemeProvider>
@@ -167,3 +186,4 @@ function App() {
 }
 
 export default App;
+
