@@ -85,13 +85,15 @@ export interface Props {
 export function ExerciseComponent({exercise, index}: Props) {
 
     const classes = useStyles();
-    const [value, setValue] = useState<number | undefined>();
+    const [value, setValue] = useState<string>('');
 
     const dispatch = useDispatch();
 
     const updateAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const answer = parseInt(e.target.value)
-        setValue(answer);
+        const re = /^[0-9\b]+$/;
+        if (e.target.value === '' || re.test(e.target.value)) {
+            setValue(e.target.value);
+        }
     };
 
     const handleKeyPress = (e: React.KeyboardEvent, id: string) => {
@@ -103,7 +105,7 @@ export function ExerciseComponent({exercise, index}: Props) {
     const submitAnswer = (id: string) => {
       dispatch({
         type: TYPES.SUBMIT_ANSWER,
-        payload: {id: id, answer: value}
+        payload: {id: id, answer: parseInt(value)}
       });
     };
 
@@ -124,7 +126,6 @@ export function ExerciseComponent({exercise, index}: Props) {
               <Box className={clsx(classes.answer)}>
                 <TextField
                   inputRef={input => input && index === 0 && input.focus()}
-                  required
                   value={value}
                   name={exercise.id}
                   variant="outlined"
