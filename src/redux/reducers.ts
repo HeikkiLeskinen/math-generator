@@ -10,7 +10,7 @@ export const initialState: GameState = {
     config: {
         numberOfExercises: 10,
         numberOfDigits: 3,
-        target: 1,
+        target: 70,
         highDigit: 10
     },
     catalogue: {exercises: []},
@@ -57,11 +57,13 @@ export const gameReducer = (
                     exercises: state.catalogue.exercises.map(e => exercise.id === e.id ? exercise : e)
                 }
                 const currentScore = exercise.correct ? state.score + 1 : state.score - 1
+                const remainingExercises = catalogue.exercises.filter(e => e.correct !== true).length;
+                const targetReached = remainingExercises !== 0 || 100 * (currentScore / state.config.numberOfExercises) >= state.config.target;
 
                 return {
                     ...state,
                     score: currentScore,
-                    targetReached: (currentScore / state.config.numberOfExercises) >= state.config.target,
+                    targetReached: targetReached,
                     running: true,
                     catalogue: catalogue
                 }

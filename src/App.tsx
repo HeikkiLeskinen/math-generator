@@ -1,5 +1,5 @@
 import "./App.css";
-import { Button, Container, Grid, TextField } from "@material-ui/core";
+import { Button, Container, Grid, makeStyles, TextField } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core";
 import purple from "@material-ui/core/colors/purple";
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,6 +15,14 @@ import { GameState } from "./redux/reducers";
 import TYPES from "./redux/types";
 import { Catalogue } from "./screens/Catalogue";
 import clsx from "clsx";
+
+const useStyles = makeStyles({
+  targetFailed: {
+    backgroundColor: "#ef5350",
+    color: "#fff",
+    textShadow: "0 0.0625rem 0 rgb(0 0 0 / 15%)",
+  }
+})
 
 function App() {
 
@@ -45,6 +53,7 @@ function App() {
     "High Digit",
     "Number of Digit",
     "Number of Exercise",
+    "Target (%)",
   ];
 
   interface SettingProps {
@@ -56,6 +65,7 @@ function App() {
     { label: LABELS[0], value: config.highDigit },
     { label: LABELS[1], value: config.numberOfDigits },
     { label: LABELS[2], value: config.numberOfExercises },
+    { label: LABELS[3], value: config.target },
   ];
 
   const isEmpty = (str: string): boolean => {
@@ -72,9 +82,12 @@ function App() {
       dispatch({type: TYPES.UPDATE_CONFIG, payload: { highDigit: value }});
     } else if (label === LABELS[1]) {
       dispatch({type: TYPES.UPDATE_CONFIG, payload: { numberOfDigits: value }});
-    } else {
+    } else if (label === LABELS[2]) {
       dispatch({type: TYPES.UPDATE_CONFIG, payload: { numberOfExercises: value }});
-    }
+    } else {
+      dispatch({type: TYPES.UPDATE_CONFIG, payload: { target: value }});
+  }
+
   };
 
   const getMax = (label: string) => {
@@ -156,7 +169,7 @@ function App() {
         <Grid item xs={2}>
           <table>
             <tr className={clsx({
-              [classes.targetReached] : targetReached === false
+              [classes.targetFailed] : targetReached === false
             })}>
               <td>Total Score:</td><td>{score}</td>
             </tr>
@@ -173,7 +186,4 @@ function App() {
 }
 
 export default App;
-function useStyles() {
-  throw new Error("Function not implemented.");
-}
 
