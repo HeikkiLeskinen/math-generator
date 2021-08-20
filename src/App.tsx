@@ -1,6 +1,6 @@
 import "./App.css";
 import { Button, Container, Grid, makeStyles, TextField } from "@material-ui/core";
-import { createMuiTheme } from "@material-ui/core";
+import { createTheme } from "@material-ui/core/styles";
 import purple from "@material-ui/core/colors/purple";
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -25,20 +25,20 @@ const useStyles = makeStyles({
 })
 
 function App() {
-
   const { config, score, targetReached } = useSelector((state: GameState) => {
     return {
       config: state.config,
       score: state.score,
-      targetReached: state.targetReached !== undefined ? state.targetReached : true
+      targetReached: state.targetReached !== undefined ? state.targetReached : false
     };
   });
+
 
   const classes = useStyles();
 
   const dispatch = useDispatch();
 
-  const theme = createMuiTheme({
+  const theme = createTheme({
     palette: {
       primary: {
         main: purple[500],
@@ -158,7 +158,7 @@ function App() {
                         onClick={() => dispatch({type: TYPES.START_GAME})}
                       >
                         GENERATE EXERCISE
-                      </Button>
+                      </Button> 
                     </CardActions>
                   </GridListTile>
                 </GridList>
@@ -168,6 +168,7 @@ function App() {
         </Grid>
         <Grid item xs={2}>
           <table>
+
             <tr className={clsx({
               [classes.targetFailed] : targetReached === false
             })}>

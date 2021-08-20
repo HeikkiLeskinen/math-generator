@@ -8,7 +8,7 @@ export const initialState: GameState = {
     score: 0,
     running: false,
     config: {
-        numberOfExercises: 10,
+        numberOfExercises: 3, //10
         numberOfDigits: 3,
         target: 70,
         highDigit: 10
@@ -28,14 +28,15 @@ export const gameReducer = (
     state: GameState = initialState,
     action: Actions,
   ): GameState => {
-
     switch (action.type) {
         case TYPES.START_GAME:
-            return {
-                ...state,
-                score: 0,
-                running: true,
-                catalogue: generateExercises(state.config)
+            localStorage.setItem('running', 'true');
+                return {
+                    ...state,
+                    score: 0,
+                    running: true,
+                    catalogue: generateExercises(state.config)
+           
             }
         case TYPES.UPDATE_CONFIG:
             return {
@@ -50,7 +51,7 @@ export const gameReducer = (
             const exercise = state.catalogue.exercises
                 .filter(e => e.id === id)
                 .map(e => Object.assign({}, e, { correct: correctAnswer(e, answer) }))[0];
-
+            
             if (exercise){
 
                 const catalogue = {
@@ -58,8 +59,8 @@ export const gameReducer = (
                 }
                 const currentScore = exercise.correct ? state.score + 1 : state.score - 1
                 const remainingExercises = catalogue.exercises.filter(e => e.correct !== true).length;
-                const targetReached = remainingExercises !== 0 || 100 * (currentScore / state.config.numberOfExercises) >= state.config.target;
-
+                const targetReached = remainingExercises === 0 && 100 * (currentScore / state.config.numberOfExercises) >= state.config.target;
+            
                 return {
                     ...state,
                     score: currentScore,

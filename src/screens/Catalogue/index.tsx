@@ -5,7 +5,6 @@ import { ExerciseComponent } from "./Exercise";
 import "./App.css";
 
 export function Catalogue() {
-
   const { catalogue } = useSelector((state: GameState) => {
     return {
       catalogue: state.catalogue
