@@ -5,7 +5,7 @@ export interface Catalogue {
 export interface Exercise {
     id: string;
     correct?: boolean; //undefined == not solved
-    operators: Array<string>;
+    operators: string;
     category: Category;
 }
 

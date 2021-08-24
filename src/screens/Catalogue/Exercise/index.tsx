@@ -74,7 +74,7 @@ const useStyles = makeStyles({
 export interface Exercise {
     id: string;
     correct?: boolean;
-    operators: Array<string>;
+    operators: string;
 }
 
 export interface Props {
@@ -120,7 +120,7 @@ export function ExerciseComponent({exercise, index}: Props) {
             <Container className={classes.exercise}>
               <Box className={classes.calculation}>
                 <Typography variant="h3">
-                  {exercise.operators.join(" ")} =
+                  {exercise.operators} =
                 </Typography>
               </Box>
               <Box className={clsx(classes.answer)}>

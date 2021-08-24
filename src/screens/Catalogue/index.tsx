@@ -11,6 +11,7 @@ export function Catalogue() {
     };
   });
 
+
   return <div>
     {catalogue.exercises
       .filter((e) => e.correct !== true)

@@ -77,51 +77,62 @@ export const gameReducer = (
     }
 }
 
-const generateExercises = (config: Config): Catalogue => {
-    const it = assignmentGenerator(config);
+const correctAnswer = (exercise: Exercise, answer: number) => {
+    const correctAnswer = evaluate(exercise.operators);
+    // eslint-disable-next-line
+    return correctAnswer == answer;
+};
 
+const randomOperator = (noDivision: boolean): string =>
+    {
+    const _index = noDivision ? 3:4;
+    const operators = '+-*/';
+      return `${operators.charAt(Math.floor(Math.random() * _index))}`; 
+    };
+const generateNumber = (operator: string, highDigit:number): number => {
+    const number = Math.floor(Math.random() * highDigit)
+    return operator=== '/' ? number + 1: operator=== '*'? number +1: number
+};
+
+const calculateNewVal = (operator: string, currentVal: number,value:number ): number => {
+    switch (operator) {
+        case '*':
+            return currentVal * value;
+        case '/':
+            return currentVal / value;
+        case '+':
+                return currentVal + value;
+        case '-':
+                return currentVal - value;
+        default:
+            return currentVal;
+    }
+    
+};
+
+const assignmentGenerator = (config: Config): string => {
+    const firstNumber = Math.floor(Math.random() * config.highDigit)+1;
+    let currentVal = firstNumber;
+    let currentString = firstNumber.toString()
+
+    while (currentString.length < 2*config.numberOfDigits -1) {
+        let operator = randomOperator(true);
+        let newNumber =  Math.min(currentVal, generateNumber(operator, config.highDigit));
+        currentVal =  calculateNewVal(operator, currentVal, newNumber);
+        currentString += operator + newNumber.toString()
+
+    }
+    return currentString;
+};
+
+const generateExercises = (config: Config): Catalogue => {
     return {
         exercises: [...Array(config.numberOfExercises)].map((_, i) => {
             return {
                 id: uuidv4(),
-                operators: it.next().value,
+                operators: assignmentGenerator(config),
                 category: Category.WALK
             };
         })
     };
 };
-
-const correctAnswer = (exercise: Exercise, answer: number) => {
-    const correctAnswer = evaluate(exercise.operators.join(""));
-    return correctAnswer == answer;
-};
-
-const randomOperator = (index: number, upTill: number): string =>
-    index % 2 === 0
-    ? Math.floor(Math.random() * upTill).toString()
-    : "+-*:".charAt(Math.floor(Math.random() * 2));
-
-const allSumsPositive = (operators: string[]): boolean => {
-    if (operators.length < 3) {
-        return true;
-    }
-
-    if (evaluate(operators.join("")) <= 0){
-        return false;
-    }
-
-    return evaluate(operators.slice(0, 3).join("")) >= 0 && allSumsPositive(operators.slice(2));
-};
-
-function* assignmentGenerator(config: Config): Generator<string[], any, number> {
-    const number = config.numberOfDigits + (config.numberOfDigits - 1);
-    while (true) {
-        const operators = [...Array(number)].map((_, i) =>
-            randomOperator(i, config.highDigit)
-        );
-
-        if (allSumsPositive(operators)) {
-            yield operators;
-        }
-    }
-}
