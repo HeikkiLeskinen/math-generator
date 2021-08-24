@@ -5,9 +5,8 @@ import purple from "@material-ui/core/colors/purple";
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ThemeProvider } from "@material-ui/core";
-
-import { GridList } from "@material-ui/core";
-import { GridListTile } from "@material-ui/core";
+import { ImageList } from "@material-ui/core";
+import { ImageListItem } from "@material-ui/core";
 import { Card } from "@material-ui/core";
 import { CardActions } from "@material-ui/core";
 import { CardContent } from "@material-ui/core";
@@ -127,9 +126,9 @@ function App() {
           >
               <Card>
               <CardContent>
-                <GridList cols={4} spacing={30} cellHeight={"auto"}>
+                <ImageList cols={4} gap={30} rowHeight={"auto"}>
                   {settings.map((setting) => (
-                    <GridListTile cols={1}>
+                    <ImageListItem cols={1}>
                       <CardActions>
                         <TextField
                           label={setting.label}
@@ -148,9 +147,9 @@ function App() {
                           }
                         />
                       </CardActions>
-                    </GridListTile>
+                    </ImageListItem>
                   ))}
-                  <GridListTile cols={1}>
+                  <ImageListItem cols={1}>
                     <CardActions>
                       <Button
                         variant="contained"
@@ -160,8 +159,8 @@ function App() {
                         GENERATE EXERCISE
                       </Button> 
                     </CardActions>
-                  </GridListTile>
-                </GridList>
+                  </ImageListItem>
+                </ImageList>
               </CardContent>
             </Card>
           </Container>
