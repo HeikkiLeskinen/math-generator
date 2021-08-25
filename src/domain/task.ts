@@ -14,27 +14,27 @@ type Symbol = {
     type: Number | Operator;
 };
 
-class Task {
+export class Task {
     symbols:string[] = []
     noDivision: boolean = true;
     highDigit: number = 6;
     numberOfDigits: number = 4;
 
-    constructor() {
-       this._generate();
+    constructor(randomNumber:any = Math.random) {
+       this._generate(randomNumber);
     }
 
-    _generate() {
+    _generate(randomNumber: any) {
 
         const randomOperator = (): string =>
         {
             const _index = this.noDivision ? 3:4;
             const operators = '+-*/';
-            return `${operators.charAt(Math.floor(Math.random() * _index))}`; 
+            return `${operators.charAt(Math.floor(randomNumber() * _index))}`; 
         };
 
         const generateNumber = (operator: string, max:number): number => {
-            const number = Math.floor(Math.random() * max)
+            const number = Math.floor(randomNumber() * max)
             return number === 0 && (operator=== '/' || operator=== '*') ? number + 1 : number
         };
 
@@ -53,7 +53,7 @@ class Task {
             } 
         };
 
-        const firstNumber = Math.floor(Math.random() * this.highDigit)+1;
+        const firstNumber = Math.floor(randomNumber() * this.highDigit)+1;
         let currentVal = firstNumber;
         let currentString = firstNumber.toString()
         this.symbols.push(currentString);
@@ -81,5 +81,5 @@ class Task {
   
 
 
-export default Task
+
 
