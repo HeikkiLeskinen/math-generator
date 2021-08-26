@@ -14,18 +14,42 @@ type Symbol = {
     type: Number | Operator;
 };
 
+interface params {
+    randomNumber?:Function,
+    noDivision?: boolean,  
+    highDigit?: number,
+    numberOfDigits?: number
+}
+
+
 export class Task {
     symbols:string[] = []
     noDivision: boolean | undefined;
     highDigit: number;
     numberOfDigits: number;
+    randomNumber: Function | undefined;
 
-    constructor(randomNumber=Math.random, noDivision: boolean=true,  highDigit: number=6,numberOfDigits: number=4) { 
-        this.noDivision=noDivision;
-        this.highDigit=highDigit;
-        this.numberOfDigits=numberOfDigits;
-        this._generate(randomNumber);
-    }
+        constructor(opts?: params ) {
+      
+          // Default values 
+          const defaults = {
+            randomNumber:Math.random,
+            noDivision: true,  
+            highDigit: 6,
+            numberOfDigits: 4
+           
+          };     
+      
+          this.noDivision=opts && opts.noDivision? opts.noDivision: defaults.noDivision;
+          this.highDigit=opts&& opts.highDigit? opts.highDigit: defaults.highDigit;
+          this.numberOfDigits=opts&& opts.numberOfDigits?opts.numberOfDigits: defaults.numberOfDigits;
+          this.randomNumber=opts && opts.randomNumber? opts.randomNumber: defaults.randomNumber;
+          this._generate(this.randomNumber); 
+      
+
+        }
+      
+
 
     _generate(randomNumber: any) {
 
