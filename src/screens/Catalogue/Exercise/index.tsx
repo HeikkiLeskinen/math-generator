@@ -11,6 +11,7 @@ import SendIcon from "@material-ui/icons/Send";
 import clsx from "clsx";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Task } from "../../../domain/task";
 import TYPES from "../../../redux/types";
 
 const useStyles = makeStyles({
@@ -74,7 +75,7 @@ const useStyles = makeStyles({
 export interface Exercise {
     id: string;
     correct?: boolean;
-    operators: string;
+    task: Task;
 }
 
 export interface Props {
@@ -83,7 +84,6 @@ export interface Props {
 }
 
 export function ExerciseComponent({exercise, index}: Props) {
-
     const classes = useStyles();
     const [value, setValue] = useState<string>('');
 
@@ -120,8 +120,8 @@ export function ExerciseComponent({exercise, index}: Props) {
             <Container className={classes.exercise}>
               <Box className={classes.calculation}>
                 <Typography variant="h3">
-                  {exercise.operators} =
-                </Typography>
+                  {exercise.task.toString()} =
+                </Typography> 
               </Box>
               <Box className={clsx(classes.answer)}>
                 <TextField

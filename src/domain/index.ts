@@ -1,3 +1,5 @@
+import { Task } from "./task";
+
 export interface Catalogue {
     exercises: Exercise[]
 }
@@ -5,7 +7,7 @@ export interface Catalogue {
 export interface Exercise {
     id: string;
     correct?: boolean; //undefined == not solved
-    operators: string;
+    task: Task;
     category: Category;
 }
 

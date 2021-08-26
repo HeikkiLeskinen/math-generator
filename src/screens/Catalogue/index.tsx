@@ -1,8 +1,8 @@
 
 import { useSelector } from "react-redux";
 import { GameState } from "../../redux/reducers";
-import { ExerciseComponent } from "./Exercise";
 import "./App.css";
+import { ExerciseComponent } from "./Exercise";
 
 export function Catalogue() {
   const { catalogue } = useSelector((state: GameState) => {
@@ -11,12 +11,14 @@ export function Catalogue() {
     };
   });
 
-
   return <div>
     {catalogue.exercises
       .filter((e) => e.correct !== true)
-      .map((exercise, index) =>
-        <ExerciseComponent key={exercise.id} exercise={exercise} index={index}/>
+      .map((exercise, index) =>  
+           <ExerciseComponent 
+            key={exercise.id} 
+            exercise={exercise} 
+            index={index}/>
       )
     }
     </div>;

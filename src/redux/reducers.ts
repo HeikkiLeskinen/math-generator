@@ -1,8 +1,8 @@
-import { evaluate } from 'mathjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Catalogue, Config, Category, Exercise } from '../domain/index';
 import {Actions} from './actions';
 import TYPES from './types';
+import {Task}  from '../domain/task';
 
 export const initialState: GameState = {
     score: 0,
@@ -78,59 +78,19 @@ export const gameReducer = (
 }
 
 const correctAnswer = (exercise: Exercise, answer: number) => {
-    const correctAnswer = evaluate(exercise.operators);
+    const correctAnswer = exercise.task.solution();
     // eslint-disable-next-line
     return correctAnswer == answer;
-};
+ };
 
-const randomOperator = (noDivision: boolean): string =>
-    {
-    const _index = noDivision ? 3:4;
-    const operators = '+-*/';
-      return `${operators.charAt(Math.floor(Math.random() * _index))}`; 
-    };
-const generateNumber = (operator: string, highDigit:number): number => {
-    const number = Math.floor(Math.random() * highDigit)
-    return operator=== '/' ? number + 1: operator=== '*'? number +1: number
-};
-
-const calculateNewVal = (operator: string, currentVal: number,value:number ): number => {
-    switch (operator) {
-        case '*':
-            return currentVal * value;
-        case '/':
-            return currentVal / value;
-        case '+':
-                return currentVal + value;
-        case '-':
-                return currentVal - value;
-        default:
-            return currentVal;
-    }
-    
-};
-
-const assignmentGenerator = (config: Config): string => {
-    const firstNumber = Math.floor(Math.random() * config.highDigit)+1;
-    let currentVal = firstNumber;
-    let currentString = firstNumber.toString()
-
-    while (currentString.length < 2*config.numberOfDigits -1) {
-        let operator = randomOperator(true);
-        let newNumber =  Math.min(currentVal, generateNumber(operator, config.highDigit));
-        currentVal =  calculateNewVal(operator, currentVal, newNumber);
-        currentString += operator + newNumber.toString()
-
-    }
-    return currentString;
-};
 
 const generateExercises = (config: Config): Catalogue => {
     return {
         exercises: [...Array(config.numberOfExercises)].map((_, i) => {
+            let task = new Task({randomNumber:()=>(Math.random()), 'highDigit':config.highDigit, 'numberOfDigits':config.numberOfDigits});
             return {
                 id: uuidv4(),
-                operators: assignmentGenerator(config),
+                task: task,
                 category: Category.WALK
             };
         })

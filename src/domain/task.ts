@@ -1,4 +1,4 @@
-import { boolean, evaluate } from "mathjs";
+import { evaluate } from "mathjs";
 
 enum Operator {
     ADD= '+',
@@ -10,9 +10,9 @@ enum Operator {
     GREATER='>'
 }
 
-type Symbol = {
+/* type Symbol = {
     type: Number | Operator;
-};
+}; */
 
 interface params {
     randomNumber?:Function,
@@ -30,10 +30,9 @@ export class Task {
     randomNumber: Function | undefined;
 
         constructor(opts?: params ) {
-      
           // Default values 
           const defaults = {
-            randomNumber:Math.random,
+            randomNumber:() => Math.random(),
             noDivision: true,  
             highDigit: 6,
             numberOfDigits: 4
@@ -45,11 +44,8 @@ export class Task {
           this.numberOfDigits=opts&& opts.numberOfDigits?opts.numberOfDigits: defaults.numberOfDigits;
           this.randomNumber=opts && opts.randomNumber? opts.randomNumber: defaults.randomNumber;
           this._generate(this.randomNumber); 
-      
-
         }
       
-
 
     _generate(randomNumber: any) {
 
