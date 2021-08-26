@@ -1,4 +1,4 @@
-import { evaluate } from "mathjs";
+import { boolean, evaluate } from "mathjs";
 
 enum Operator {
     ADD= '+',
@@ -16,12 +16,15 @@ type Symbol = {
 
 export class Task {
     symbols:string[] = []
-    noDivision: boolean = true;
-    highDigit: number = 6;
-    numberOfDigits: number = 4;
+    noDivision: boolean | undefined;
+    highDigit: number;
+    numberOfDigits: number;
 
-    constructor(randomNumber:any = Math.random) {
-       this._generate(randomNumber);
+    constructor(randomNumber=Math.random, noDivision?: boolean,  highDigit?: number | undefined,numberOfDigits?: number | undefined) { 
+        this.noDivision=noDivision? noDivision : true;
+        this.highDigit=highDigit? highDigit: 6;
+        this.numberOfDigits=numberOfDigits? numberOfDigits:4;
+        this._generate(randomNumber);
     }
 
     _generate(randomNumber: any) {

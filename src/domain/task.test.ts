@@ -1,4 +1,3 @@
-import { getAllJSDocTagsOfKind } from 'typescript';
 import {Task}  from './task';
 
 describe('Task class ', () => {
@@ -8,23 +7,15 @@ describe('Task class ', () => {
     });
 
     it('is able to solve itself', () => {
-        var task = new Task(()=>(1));        
-        expect(task).toEqual({
-            symbols: [ '7', '/', '6', '/', '1.1666666666666667' ],
-            noDivision: true,
-            highDigit: 6,
-            numberOfDigits: 4
-          })
-        
-        
+        const task = new Task(() => (0.9));      
+
+        expect(task.solution()).toEqual(750); 
     });
 
     it('can print itself as a string', () => {
         const task = new Task(()=>(0.5));
-        console.log(task)
         expect(task.toString()).toEqual('4 - 3 - 1 - 0')
     });
     
 })
   
-
