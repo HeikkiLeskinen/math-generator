@@ -16,6 +16,11 @@ describe('Task class ', () => {
         const task = new Task(()=>(0.5));
         expect(task.toString()).toEqual('4 - 3 - 1 - 0')
     });
+    it('can overwrite default value', () => {
+        const task = new Task(()=>(0.5),true, 12, 2 );
+        expect(task.toString()).toEqual('7 - 6')
+    });
     
 })
+
   

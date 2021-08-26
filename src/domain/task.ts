@@ -20,10 +20,10 @@ export class Task {
     highDigit: number;
     numberOfDigits: number;
 
-    constructor(randomNumber=Math.random, noDivision?: boolean,  highDigit?: number | undefined,numberOfDigits?: number | undefined) { 
-        this.noDivision=noDivision? noDivision : true;
-        this.highDigit=highDigit? highDigit: 6;
-        this.numberOfDigits=numberOfDigits? numberOfDigits:4;
+    constructor(randomNumber=Math.random, noDivision: boolean=true,  highDigit: number=6,numberOfDigits: number=4) { 
+        this.noDivision=noDivision;
+        this.highDigit=highDigit;
+        this.numberOfDigits=numberOfDigits;
         this._generate(randomNumber);
     }
 
