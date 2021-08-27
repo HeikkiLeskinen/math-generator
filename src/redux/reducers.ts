@@ -1,8 +1,8 @@
-import { v4 as uuidv4 } from 'uuid';
-import { Catalogue, Config, Category, Exercise } from '../domain/index';
+import { Catalogue, Config, Exercise } from '../domain/index';
 import {Actions} from './actions';
 import TYPES from './types';
-import {Task}  from '../domain/task';
+import {MathExercise}  from '../domain/mathExercise';
+
 
 export const initialState: GameState = {
     score: 0,
@@ -50,7 +50,7 @@ export const gameReducer = (
             const {id, answer} = action.payload
             const exercise = state.catalogue.exercises
                 .filter(e => e.id === id)
-                .map(e => Object.assign({}, e, { correct: correctAnswer(e, answer) }))[0];
+                .map(e => Object.assign({}, e, { correct: correctAnswer(e,answer) }))[0];
             
             if (exercise){
 
@@ -78,21 +78,14 @@ export const gameReducer = (
 }
 
 const correctAnswer = (exercise: Exercise, answer: number) => {
-    const correctAnswer = exercise.task.solution();
-    // eslint-disable-next-line
-    return correctAnswer == answer;
- };
-
+    return exercise.solution === answer;
+};
 
 const generateExercises = (config: Config): Catalogue => {
     return {
         exercises: [...Array(config.numberOfExercises)].map((_, i) => {
-            let task = new Task({randomNumber:()=>(Math.random()), 'highDigit':config.highDigit, 'numberOfDigits':config.numberOfDigits});
-            return {
-                id: uuidv4(),
-                task: task,
-                category: Category.WALK
-            };
+            let exercise = new MathExercise({randomNumber:()=>(Math.random()), 'highDigit':config.highDigit, 'numberOfDigits':config.numberOfDigits});
+            return exercise;
         })
     };
 };

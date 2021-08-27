@@ -1,14 +1,25 @@
-import { Task } from "./task";
+import { MathExercise } from "./mathExercise";
 
 export interface Catalogue {
     exercises: Exercise[]
 }
 
+export enum Operator {
+    ADD= '+',
+    SUBSTRACT = '-',
+    MULTIPLY = '*',
+    DIVIDE= '/',
+    EQUAL='=',
+    LESS='<',
+    GREATER='>'
+}
+
 export interface Exercise {
     id: string;
     correct?: boolean; //undefined == not solved
-    task: Task;
     category: Category;
+    solution: Number;
+    exercise: string;
 }
 
 export interface Config {

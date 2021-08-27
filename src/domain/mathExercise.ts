@@ -1,18 +1,6 @@
 import { evaluate } from "mathjs";
-
-enum Operator {
-    ADD= '+',
-    SUBSTRACT = '-',
-    MULTIPLY = '*',
-    DIVIDE= '/',
-    EQUAL='=',
-    LESS='<',
-    GREATER='>'
-}
-
-/* type Symbol = {
-    type: Number | Operator;
-}; */
+import { Category, Exercise } from ".";
+import { v4 as uuidv4 } from 'uuid';
 
 interface params {
     randomNumber?:Function,
@@ -22,30 +10,40 @@ interface params {
 }
 
 
-export class Task {
+export class MathExercise implements Exercise { 
     symbols:string[] = []
     noDivision: boolean | undefined;
     highDigit: number;
     numberOfDigits: number;
     randomNumber: Function | undefined;
+    category: Category =  Category.WALK;
+    id: string;
+    correct?: boolean | undefined;
+    solution:Number;
+    exercise: string;
+    
+    constructor(opts?: params ) {
+        // Default values 
+        const defaults = {
+          randomNumber:() => Math.random(),
+          noDivision: true,  
+          highDigit: 6,
+          numberOfDigits: 4,
+        };     
+        this.id=uuidv4();
+        this.noDivision=opts && opts.noDivision? opts.noDivision: defaults.noDivision;
+        this.highDigit=opts&& opts.highDigit? opts.highDigit: defaults.highDigit;
+        this.numberOfDigits=opts&& opts.numberOfDigits?opts.numberOfDigits: defaults.numberOfDigits;
+        this.randomNumber=opts && opts.randomNumber? opts.randomNumber: defaults.randomNumber;
+        this._generate(this.randomNumber);   
+        this.solution = this._solution(); 
+        this.exercise = this.symbols.join(" ");
+      }
 
-        constructor(opts?: params ) {
-          // Default values 
-          const defaults = {
-            randomNumber:() => Math.random(),
-            noDivision: true,  
-            highDigit: 6,
-            numberOfDigits: 4
-           
-          };     
-      
-          this.noDivision=opts && opts.noDivision? opts.noDivision: defaults.noDivision;
-          this.highDigit=opts&& opts.highDigit? opts.highDigit: defaults.highDigit;
-          this.numberOfDigits=opts&& opts.numberOfDigits?opts.numberOfDigits: defaults.numberOfDigits;
-          this.randomNumber=opts && opts.randomNumber? opts.randomNumber: defaults.randomNumber;
-          this._generate(this.randomNumber); 
-        }
-      
+    
+    _solution(): number {     
+        return evaluate(this.toString());
+    } 
 
     _generate(randomNumber: any) {
 
@@ -88,21 +86,18 @@ export class Task {
             currentString += operator + newNumber.toString()
              //save symbols 
             this.symbols.push(operator, newNumber.toString());
+        
         }
-
-       
     }
-
-    solution(): Number | Operator {        
-        return evaluate(this.toString());
-    }
-
+    
     toString(): string {
-        return this.symbols.join(" ");
+       return this.symbols.join(" ");
+         
     }
+
+
 }
   
-
 
 
 
