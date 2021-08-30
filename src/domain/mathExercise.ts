@@ -1,5 +1,5 @@
 import { evaluate } from "mathjs";
-import { Category, Exercise } from ".";
+import { AdvancedOperator, BaseOperator, Category, Exercise, randEnumValue } from ".";
 import { v4 as uuidv4 } from 'uuid';
 
 interface params {
@@ -47,14 +47,13 @@ export class MathExercise implements Exercise {
 
     _generate(randomNumber: any) {
 
-        const randomOperator = (): string =>
+        const randomOperator = () =>
         {
-            const _index = this.noDivision ? 3:4;
-            const operators = '+-*/';
-            return `${operators.charAt(Math.floor(randomNumber() * _index))}`; 
+            const operators = this.noDivision ? BaseOperator: AdvancedOperator
+            return randEnumValue(operators)
         };
 
-        const generateNumber = (operator: string, max:number): number => {
+        const generateNumber = (operator: BaseOperator | AdvancedOperator, max:number): number => {
             const number = Math.floor(randomNumber() * max)
             return number === 0 && (operator=== '/' || operator=== '*') ? number + 1 : number
         };
@@ -94,6 +93,7 @@ export class MathExercise implements Exercise {
        return this.symbols.join(" ");
          
     }
+    
 
 
 }

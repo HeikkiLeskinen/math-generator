@@ -48,9 +48,10 @@ export const gameReducer = (
             }
         case TYPES.SUBMIT_ANSWER:
             const {id, answer} = action.payload
+
             const exercise = state.catalogue.exercises
                 .filter(e => e.id === id)
-                .map(e => Object.assign({}, e, { correct: correctAnswer(e,answer) }))[0];
+                .map(e => Object.assign({}, e, { correct: correctAnswer(e,answer) }))[0]; 
             
             if (exercise){
 
