@@ -49,14 +49,15 @@ export const gameReducer = (
         case TYPES.SUBMIT_ANSWER:
             const {id, answer} = action.payload
 
-            const exercise = state.catalogue.exercises
-                .filter(e => e.id === id)
-                .map(e => Object.assign({}, e, { correct: correctAnswer(e,answer) }))[0]; 
-            
-            if (exercise){
+            let exercise: any = state.catalogue.exercises
+                .filter(e => e.id === id) 
+                .map(e => {return {...e, correct : correctAnswer(e,answer)}})
 
+            if (exercise){
                 const catalogue = {
-                    exercises: state.catalogue.exercises.map(e => exercise.id === e.id ? exercise : e)
+                    exercises: state.catalogue.exercises
+                    .map(_e => exercise.find((e: { id: string; }) => e.id === _e.id) || _e)
+                  
                 }
                 const currentScore = exercise.correct ? state.score + 1 : state.score - 1
                 const remainingExercises = catalogue.exercises.filter(e => e.correct !== true).length;

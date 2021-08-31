@@ -31,7 +31,7 @@ export interface Exercise {
     correct?: boolean; //undefined == not solved
     category: Category;
     solution: Number;
-    exercise: string;
+    body: string;
 }
 
 export interface Config {

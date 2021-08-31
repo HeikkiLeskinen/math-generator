@@ -114,7 +114,7 @@ export function ExerciseComponent({exercise, index}: Props) {
             <Container className={classes.exercise}>
               <Box className={classes.calculation}>
                 <Typography variant="h3">
-                  {exercise.exercise} =
+                  {exercise.body} =
                 </Typography> 
               </Box>
               <Box className={clsx(classes.answer)}>

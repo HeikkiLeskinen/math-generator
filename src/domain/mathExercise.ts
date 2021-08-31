@@ -20,7 +20,7 @@ export class MathExercise implements Exercise {
     id: string;
     correct?: boolean | undefined;
     solution:Number;
-    exercise: string;
+    body: string;
     
     constructor(opts?: params ) {
         // Default values 
@@ -37,8 +37,9 @@ export class MathExercise implements Exercise {
         this.randomNumber=opts && opts.randomNumber? opts.randomNumber: defaults.randomNumber;
         this._generate(this.randomNumber);   
         this.solution = this._solution(); 
-        this.exercise = this.symbols.join(" ");
+        this.body = this.symbols.join(" ");
       }
+    
 
     
     _solution(): number {     
