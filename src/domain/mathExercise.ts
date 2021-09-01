@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface params {
     randomNumber?:Function,
+    randomOperator?:Function,
     noDivision?: boolean,  
     highDigit?: number,
     numberOfDigits?: number
@@ -21,6 +22,7 @@ export class MathExercise implements Exercise {
     correct?: boolean | undefined;
     solution:Number;
     body: string;
+    randomOperator: Function | undefined;
     
     constructor(opts?: params ) {
         // Default values 
@@ -29,13 +31,19 @@ export class MathExercise implements Exercise {
           noDivision: true,  
           highDigit: 6,
           numberOfDigits: 4,
+          randomOperator : () => {
+              const operators = this.noDivision ? BaseOperator: AdvancedOperator
+              return randEnumValue(operators)
+          },
         };     
+
         this.id=uuidv4();
         this.noDivision=opts && opts.noDivision? opts.noDivision: defaults.noDivision;
         this.highDigit=opts&& opts.highDigit? opts.highDigit: defaults.highDigit;
         this.numberOfDigits=opts&& opts.numberOfDigits?opts.numberOfDigits: defaults.numberOfDigits;
         this.randomNumber=opts && opts.randomNumber? opts.randomNumber: defaults.randomNumber;
-        this._generate(this.randomNumber);   
+        this.randomOperator= opts && opts.randomOperator? opts.randomOperator: defaults.randomOperator;
+        this._generate(this.randomNumber, this.randomOperator);   
         this.solution = this._solution(); 
         this.body = this.symbols.join(" ");
       }
@@ -46,14 +54,7 @@ export class MathExercise implements Exercise {
         return evaluate(this.toString());
     } 
 
-    _generate(randomNumber: any) {
-
-        const randomOperator = () =>
-        {
-            const operators = this.noDivision ? BaseOperator: AdvancedOperator
-            return randEnumValue(operators)
-        };
-
+    _generate(randomNumber: any, randomOperator:any) {
         const generateNumber = (operator: BaseOperator | AdvancedOperator, max:number): number => {
             const number = Math.floor(randomNumber() * max)
             return number === 0 && (operator=== '/' || operator=== '*') ? number + 1 : number

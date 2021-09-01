@@ -1,5 +1,3 @@
-import { MathExercise } from "./mathExercise";
-
 export interface Catalogue {
     exercises: Exercise[]
 }
