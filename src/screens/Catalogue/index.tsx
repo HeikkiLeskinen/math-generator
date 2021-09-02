@@ -11,17 +11,17 @@ export function Catalogue() {
     };
   });
 
-  return <div>
-    {catalogue.exercises
-      .filter((e) => e.wasLastSubmittedAnswerCorrect !== true)
-      .map((exercise, index) =>  
-      {
-        return <ExerciseComponent 
-        key={exercise.id} 
-        exercise={exercise} 
-        index={index}/>
+
+  return catalogue.exerciseToBeCompleted ? 
+    <div>
+      {catalogue.exerciseToBeCompleted.map((exercise, index) =>  
+        {
+          return <ExerciseComponent 
+          key={exercise.id} 
+          exercise={exercise} 
+          index={index}/>
+        }
+        )
       }
-      )
-    }
-    </div>;
+    </div> : null;
 }

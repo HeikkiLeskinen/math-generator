@@ -12,7 +12,6 @@ import clsx from "clsx";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Exercise } from "../../../domain";
-import { MathExercise } from "../../../domain/mathExercise";
 import TYPES from "../../../redux/types";
 
 const useStyles = makeStyles({

@@ -24,8 +24,12 @@ export const initialState: GameState = {
         target: 70,
         highDigit: 10
     },
-    catalogue: {exercises: []},
-};
+    catalogue: {  
+        exercisesCompleted: [],
+        exerciseToBeCompleted: []
+    }
+}
+
 
 
 
@@ -53,22 +57,26 @@ export const gameReducer = (
             }
             case TYPES.SUBMIT_ANSWER:
                 const {id, answer} = action.payload
-    
-                const exercise: Exercise | undefined = state.catalogue.exercises.find(e => e.id === id);
+                const exercise: Exercise | undefined = state.catalogue.exerciseToBeCompleted.find(e => e.id === id);
                     
                 if (exercise){
+                    let currentScore: number;
+                    let newCatalogue: Catalogue = state.catalogue;
 
-                    const currentScore = (exercise.solution(answer)) ?
-                        state.score + 1 :
-                        state.score - 1
+                    if(exercise.solution(answer)){
+                        currentScore = state.score + 1 ;
+                        newCatalogue.exercisesCompleted.push(exercise);
+                        newCatalogue.exerciseToBeCompleted.splice(newCatalogue.exerciseToBeCompleted.findIndex(e => e.id === id), 1);
+                     
+                    }
 
-                    const catalogue = {
-                        exercises: state.catalogue.exercises
-                            .map(e => e.id === exercise.id ? exercise : e)    
-                    };
+                    else {
+                        currentScore = state.score - 1 ;
+
+                    }
 
                     // find out a better way to do this, hint: change data structure?
-                    const remainingExercises = catalogue.exercises.filter(e => !e.wasLastSubmittedAnswerCorrect).length;
+                    const remainingExercises = newCatalogue.exerciseToBeCompleted.length;
                     const targetReached = remainingExercises === 0 && 100 * (currentScore / state.config.numberOfExercises) >= state.config.target;
                 
                     return {
@@ -76,7 +84,7 @@ export const gameReducer = (
                         score: currentScore,
                         targetReached: targetReached,
                         running: true,
-                        catalogue: catalogue,
+                        catalogue: newCatalogue,
                     }
                 } else {
                     return state;
@@ -89,9 +97,13 @@ export const gameReducer = (
 
 const generateExercises = (config: Config): Catalogue => {
     return {
-        exercises: [...Array(config.numberOfExercises)].map((_, i) => {
+        exercisesCompleted:[],
+        exerciseToBeCompleted: [...Array(config.numberOfExercises)].map((_, i) => {
             let exercise = new MathExercise({generateRandomNumber:()=>(Math.random()), 'highDigit':config.highDigit, 'numberOfDigits':config.numberOfDigits});
             return exercise;
         })
     };
+
+
+
 };

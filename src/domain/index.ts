@@ -1,5 +1,6 @@
 export interface Catalogue {
-    exercises: Exercise[]
+    exercisesCompleted: Exercise[]
+    exerciseToBeCompleted: Exercise[]
 }
 
 export enum BaseOperator {
