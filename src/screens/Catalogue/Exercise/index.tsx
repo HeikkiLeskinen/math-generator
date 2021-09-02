@@ -12,6 +12,7 @@ import clsx from "clsx";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Exercise } from "../../../domain";
+import { MathExercise } from "../../../domain/mathExercise";
 import TYPES from "../../../redux/types";
 
 const useStyles = makeStyles({
@@ -108,13 +109,13 @@ export function ExerciseComponent({exercise, index}: Props) {
         <Card key={exercise.id}>
         <CardContent
           className={clsx(classes.cardRow, {
-            [classes.inCorrect]: exercise.correct === false,
+            [classes.inCorrect]: exercise.wasLastSubmittedAnswerCorrect === false,
           })}
         >
             <Container className={classes.exercise}>
               <Box className={classes.calculation}>
                 <Typography variant="h3">
-                  {exercise.body} =
+                  {exercise.asString} = 
                 </Typography> 
               </Box>
               <Box className={clsx(classes.answer)}>
@@ -128,11 +129,11 @@ export function ExerciseComponent({exercise, index}: Props) {
                   InputProps={{
                     className: clsx(classes.input, {
                       [(classes.inCorrect, classes.white)]:
-                        exercise.correct === false,
+                        exercise.wasLastSubmittedAnswerCorrect === false,
                     }),
                     classes: {
                       focused:
-                        exercise.correct === false
+                        exercise.wasLastSubmittedAnswerCorrect === false
                           ? classes.yellow
                           : classes.focused,
                     },

@@ -4,11 +4,22 @@ import TYPES from './types';
 import {MathExercise}  from '../domain/mathExercise';
 
 
+  
+export default function reducer(state = initialState) {}
+
+export interface GameState {
+    score: number;
+    running: boolean;
+    config: Config;
+    targetReached?: boolean;
+    catalogue: Catalogue;
+}
+
 export const initialState: GameState = {
     score: 0,
     running: false,
     config: {
-        numberOfExercises: 3, //10
+        numberOfExercises: 3,
         numberOfDigits: 3,
         target: 70,
         highDigit: 10
@@ -16,13 +27,7 @@ export const initialState: GameState = {
     catalogue: {exercises: []},
 };
 
-export interface GameState {
-    score: number;
-    targetReached?: boolean;
-    running: boolean;
-    config: Config;
-    catalogue: Catalogue;
-}
+
 
 export const gameReducer = (
     state: GameState = initialState,
@@ -46,47 +51,46 @@ export const gameReducer = (
                     ...action.payload
                 }
             }
-        case TYPES.SUBMIT_ANSWER:
-            const {id, answer} = action.payload
+            case TYPES.SUBMIT_ANSWER:
+                const {id, answer} = action.payload
+    
+                const exercise: Exercise | undefined = state.catalogue.exercises.find(e => e.id === id);
+                    
+                if (exercise){
 
-            let exercise: any = state.catalogue.exercises
-                .filter(e => e.id === id) 
-                .map(e => {return {...e, correct : correctAnswer(e,answer)}})
+                    const currentScore = (exercise.solution(answer)) ?
+                        state.score + 1 :
+                        state.score - 1
 
-            if (exercise){
-                const catalogue = {
-                    exercises: state.catalogue.exercises
-                    .map(_e => exercise.find((e: { id: string; }) => e.id === _e.id) || _e)
-                  
+                    const catalogue = {
+                        exercises: state.catalogue.exercises
+                            .map(e => e.id === exercise.id ? exercise : e)    
+                    };
+
+                    // find out a better way to do this, hint: change data structure?
+                    const remainingExercises = catalogue.exercises.filter(e => !e.wasLastSubmittedAnswerCorrect).length;
+                    const targetReached = remainingExercises === 0 && 100 * (currentScore / state.config.numberOfExercises) >= state.config.target;
+                
+                    return {
+                        ...state,
+                        score: currentScore,
+                        targetReached: targetReached,
+                        running: true,
+                        catalogue: catalogue,
+                    }
+                } else {
+                    return state;
                 }
-                const currentScore = exercise.correct ? state.score + 1 : state.score - 1
-                const remainingExercises = catalogue.exercises.filter(e => e.correct !== true).length;
-                const targetReached = remainingExercises === 0 && 100 * (currentScore / state.config.numberOfExercises) >= state.config.target;
-            
-                return {
-                    ...state,
-                    score: currentScore,
-                    targetReached: targetReached,
-                    running: true,
-                    catalogue: catalogue
-                }
-            } else {
-                return state;
-            }
 
         default:
             return state;
     }
 }
 
-const correctAnswer = (exercise: Exercise, answer: number) => {
-    return exercise.solution === answer;
-};
-
 const generateExercises = (config: Config): Catalogue => {
     return {
         exercises: [...Array(config.numberOfExercises)].map((_, i) => {
-            let exercise = new MathExercise({randomNumber:()=>(Math.random()), 'highDigit':config.highDigit, 'numberOfDigits':config.numberOfDigits});
+            let exercise = new MathExercise({generateRandomNumber:()=>(Math.random()), 'highDigit':config.highDigit, 'numberOfDigits':config.numberOfDigits});
             return exercise;
         })
     };

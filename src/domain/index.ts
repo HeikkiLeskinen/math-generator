@@ -3,7 +3,7 @@ export interface Catalogue {
 }
 
 export enum BaseOperator {
-    ADD= '+',
+    ADD = '+',
     SUBSTRACT = '-',
     MULTIPLY = '*',
 }
@@ -18,18 +18,18 @@ export enum AdvancedOperator {
     GREATER='>'
 }
 
-export function randEnumValue<T>(enumObj: T): T[keyof T] {
+export function randEnumValue<T>(enumObj: T, randomNumberGenerator: Function): T[keyof T] {
     const enumVal = Object.values(enumObj);
-    const i = Math.floor(Math.random() * enumVal.length);
+    const i = Math.floor(randomNumberGenerator() * enumVal.length);
     return enumVal[i];
 }
 
 export interface Exercise {
     id: string;
-    correct?: boolean; //undefined == not solved
-    category: Category;
-    solution: Number;
-    body: string;
+    asString: string;
+    wasLastSubmittedAnswerCorrect?: boolean;
+    toString: Function;
+    solution: Function;        
 }
 
 export interface Config {

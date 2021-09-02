@@ -13,12 +13,14 @@ export function Catalogue() {
 
   return <div>
     {catalogue.exercises
-      .filter((e) => e.correct !== true)
+      .filter((e) => e.wasLastSubmittedAnswerCorrect !== true)
       .map((exercise, index) =>  
-           <ExerciseComponent 
-            key={exercise.id} 
-            exercise={exercise} 
-            index={index}/>
+      {
+        return <ExerciseComponent 
+        key={exercise.id} 
+        exercise={exercise} 
+        index={index}/>
+      }
       )
     }
     </div>;

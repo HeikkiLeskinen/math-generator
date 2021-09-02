@@ -166,16 +166,22 @@ function App() {
           </Container>
         </Grid>
         <Grid item xs={2}>
-          <table>
 
-            <tr className={clsx({
+          <table>
+            <thead>
+              <tr className={clsx({
               [classes.targetFailed] : targetReached === false
             })}>
-              <td>Total Score:</td><td>{score}</td>
-            </tr>
-            <tr>
-              <td>Max Score:</td><td>{config.numberOfExercises}</td>
-            </tr>
+                <th>Total Score:</th>
+                <th>{score}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Max Score:</td>
+                <td>{config.numberOfExercises}</td>
+              </tr>
+            </tbody>
           </table>
         </Grid>
       </Grid>
