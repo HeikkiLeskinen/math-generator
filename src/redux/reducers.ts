@@ -3,8 +3,6 @@ import {Actions} from './actions';
 import TYPES from './types';
 import {MathExercise}  from '../domain/mathExercise';
 
-
-  
 export default function reducer(state = initialState) {}
 
 export interface GameState {
@@ -20,7 +18,7 @@ export const initialState: GameState = {
     running: false,
     config: {
         numberOfExercises: 3,
-        numberOfDigits: 3,
+        numberOfDigits: 2,
         target: 70,
         highDigit: 10
     },
@@ -29,8 +27,6 @@ export const initialState: GameState = {
         exerciseToBeCompleted: []
     }
 }
-
-
 
 
 export const gameReducer = (
@@ -57,17 +53,19 @@ export const gameReducer = (
             }
             case TYPES.SUBMIT_ANSWER:
                 const {id, answer} = action.payload
-                const exercise: Exercise | undefined = state.catalogue.exerciseToBeCompleted.find(e => e.id === id);
+                let newCatalogue: Catalogue = state.catalogue;
+                let currentScore: number;
+
+                const exercise: Exercise | undefined = newCatalogue.exerciseToBeCompleted.find(e => e.id === id);
                     
                 if (exercise){
-                    let currentScore: number;
-                    let newCatalogue: Catalogue = state.catalogue;
-
+                    console.log("Are you and object?", exercise instanceof Object);
+                    console.log("But are you and math-exercise?", exercise instanceof MathExercise);
+                    
                     if(exercise.solution(answer)){
                         currentScore = state.score + 1 ;
                         newCatalogue.exercisesCompleted.push(exercise);
                         newCatalogue.exerciseToBeCompleted.splice(newCatalogue.exerciseToBeCompleted.findIndex(e => e.id === id), 1);
-                     
                     }
 
                     else {

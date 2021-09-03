@@ -5,7 +5,7 @@ const SetTransform = createTransform(
     (inboundState: GameState, key): any => {
         return {
             ...inboundState,
-            user: undefined,
+         
         };
     },
     (outboundState: any, key) => {
