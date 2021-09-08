@@ -41,7 +41,6 @@ export interface Exercise {
 export interface Config {
     numberOfExercises: number;
     numberOfDigits: number;
-    target: number;
     highDigit: number;
 }
 

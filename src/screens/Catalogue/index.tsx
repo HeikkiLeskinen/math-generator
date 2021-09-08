@@ -6,7 +6,6 @@ import { ExerciseComponent } from "./Exercise";
 
 export function Catalogue() {
   const { catalogue  } = useSelector((state: GameState) => {
-    console.log('state', state)
     return {
       catalogue: state.catalogue 
     } ;

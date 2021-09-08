@@ -13,7 +13,7 @@ import { CardContent } from "@material-ui/core";
 import { GameState, initialState } from "./redux/reducers";
 import TYPES from "./redux/types";
 import { Catalogue } from "./screens/Catalogue";
-import clsx from "clsx";
+
 
 const useStyles = makeStyles({
   targetFailed: {
@@ -24,11 +24,10 @@ const useStyles = makeStyles({
 })
 
 function App() {
-  const { config, score, targetReached } = useSelector((state: GameState) => {
+  const { config, score } = useSelector((state: GameState) => {
     return {
       config: state.config?state.config: initialState.config,
       score: state.score,
-      targetReached: state.targetReached !== undefined ? state.targetReached : false
     };
   });
 
@@ -63,8 +62,7 @@ function App() {
   const settings: SettingProps[] = [
     { label: LABELS[0], value: config.highDigit },
     { label: LABELS[1], value: config.numberOfDigits },
-    { label: LABELS[2], value: config.numberOfExercises },
-    { label: LABELS[3], value: config.target },
+    { label: LABELS[2], value: config.numberOfExercises }
   ];
 
   const isEmpty = (str: string): boolean => {
@@ -169,9 +167,7 @@ function App() {
 
           <table>
             <thead>
-              <tr className={clsx({
-              [classes.targetFailed] : targetReached === false
-            })}>
+              <tr >
                 <th>Total Score:</th>
                 <th>{score}</th>
               </tr>

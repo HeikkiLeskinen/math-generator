@@ -9,20 +9,16 @@ export default function reducer() {}
 
 export interface GameState {
     score: number;
-    running: boolean;
     config: Config;
-    targetReached?: boolean;
     catalogue: Catalogue;
     storage: Storage;
 }
 
 export const initialState: GameState = {
     score: 0,
-    running: false,
     config: {
         numberOfExercises: 3,
         numberOfDigits: 2,
-        target: 70,
         highDigit: 10
     },
     catalogue: {  
@@ -55,11 +51,10 @@ export const gameReducer = (
                 }
             }
         case TYPES.START_GAME:
-            const catalogue = generateExercises(initialState.config)        
+            const catalogue = generateExercises(state.config)        
             return {
                 ...state,
                 score: 0,
-                running: true,
                 catalogue: catalogue,
                 storage: updateStorage(catalogue)
             }
