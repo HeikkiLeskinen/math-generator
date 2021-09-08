@@ -22,7 +22,7 @@ export class MathExercise implements Exercise {
         this.symbols = symbols; 
     }
 
-    solution(answer: number): boolean { //rename to solve?
+    solve(answer: number): boolean { //rename to solve?
         this.wasLastSubmittedAnswerCorrect = (evaluate(this.toString()) === answer);        
         return this.wasLastSubmittedAnswerCorrect;
     }  

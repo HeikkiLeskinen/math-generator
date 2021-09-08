@@ -35,7 +35,7 @@ export interface Exercise {
     id: string;
     wasLastSubmittedAnswerCorrect?: boolean;
     toString: Function;
-    solution: Function;        
+    solve: Function;        
 }
 
 export interface Config {

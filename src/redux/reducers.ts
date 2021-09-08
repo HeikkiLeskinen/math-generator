@@ -77,7 +77,7 @@ export const gameReducer = (
                 const exercise = state.catalogue.exerciseToBeCompleted.find(e => e.id === id);
     
                 if (exercise){      
-                    if (exercise.solution(answer)){
+                    if (exercise.solve(answer)){
                      
                         const catalogue = {
                             ...state.catalogue,
