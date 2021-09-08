@@ -33,7 +33,6 @@ export interface Storage {
 
 export interface Exercise {
     id: string;
-    asString: string;
     wasLastSubmittedAnswerCorrect?: boolean;
     toString: Function;
     solution: Function;        

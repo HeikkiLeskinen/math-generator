@@ -3,74 +3,23 @@ import { AdvancedOperator, BaseOperator, Exercise, randEnumValue } from ".";
 import { v4 as uuidv4 } from 'uuid';
 
 interface Params {
-    generateRandomNumber?: Function, 
-    highDigit: number,
-    numberOfDigits: number,
-    id?: string,
-    symbols?: string[]
+    id: string,
+    symbols: string[]
 }
 
 export class MathExercise implements Exercise { 
     id: string;   
     symbols: string[] = []
     wasLastSubmittedAnswerCorrect?: boolean
-    asString
-    
+   
     constructor(params : Params = {} as Params) {
         const {
-            highDigit,
-            numberOfDigits,
-            generateRandomNumber = Math.random,
-            id = undefined,
-            symbols = undefined,    
+            id,
+            symbols,    
         } = params;
 
-        if (id && symbols){
-            this.id = id; 
-            this.symbols = symbols; 
-        } else {
-            this.id = uuidv4(); 
-            this._generate(generateRandomNumber, highDigit, numberOfDigits);                
-        }
-
-        this.asString = this.toString(); // remove me <-            
-    }
-
-    _generate(generateRandomNumber: Function, highDigit: number, numberOfDigits: number) {
-        const generateNumber = (operator: BaseOperator | AdvancedOperator, max:number): number => {
-            const number = Math.floor(generateRandomNumber() * max)
-            return number === 0 && (operator=== '/' || operator=== '*') ? number + 1 : number
-        };
-
-        const calculateNewVal = (operator: string, currentVal: number,value:number ): number => {
-            switch (operator) {
-                case '*':
-                    return currentVal * value;
-                case '/':
-                    return currentVal / value;
-                case '+':
-                        return currentVal + value;
-                case '-':
-                        return currentVal - value;
-                default:
-                    return currentVal;
-            } 
-        };
-
-        const firstNumber = Math.floor(generateRandomNumber() * highDigit)+1;
-        let currentVal = firstNumber;
-        let currentString = firstNumber.toString()
-        this.symbols.push(currentString);
-
-        while (currentString.length < 2 * numberOfDigits -1) {
-            let operator = randEnumValue(BaseOperator, generateRandomNumber)
-            let newNumber =  Math.min(currentVal, generateNumber(operator, highDigit));
-            currentVal =  calculateNewVal(operator, currentVal, newNumber);
-            currentString += operator + newNumber.toString()
-             //save symbols 
-            this.symbols.push(operator, newNumber.toString());
-        
-        }
+        this.id = id;
+        this.symbols = symbols; 
     }
 
     solution(answer: number): boolean { //rename to solve?
@@ -84,6 +33,61 @@ export class MathExercise implements Exercise {
     
 }
   
+const generateSymbols = (generateRandomNumber: Function, highDigit: number, numberOfDigits: number) => {
+    const generateNumber = (operator: BaseOperator | AdvancedOperator, max:number): number => {
+        const number = Math.floor(generateRandomNumber() * max)
+        return number === 0 && (operator=== '/' || operator=== '*') ? number + 1 : number
+    };
+
+    const calculateNewVal = (operator: string, currentVal: number,value:number ): number => {
+        switch (operator) {
+            case '*':
+                return currentVal * value;
+            case '/':
+                return currentVal / value;
+            case '+':
+                    return currentVal + value;
+            case '-':
+                    return currentVal - value;
+            default:
+                return currentVal;
+        } 
+    };
+
+    let symbols =[]
+
+    const firstNumber = Math.floor(generateRandomNumber() * highDigit)+1;
+    let currentVal = firstNumber;
+    let currentString = firstNumber.toString()
+    symbols.push(currentString);
+
+    while (currentString.length < 2 * numberOfDigits -1) {
+        let operator = randEnumValue(BaseOperator, generateRandomNumber)
+        let newNumber =  Math.min(currentVal, generateNumber(operator, highDigit));
+        currentVal =  calculateNewVal(operator, currentVal, newNumber);
+        currentString += operator + newNumber.toString()
+         //save symbols 
+        symbols.push(operator, newNumber.toString());
+    
+    }
+    return symbols
+}
+
+interface CreateMathExerciseProps {
+    generateRandomNumber?: Function, 
+    highDigit: number,
+    numberOfDigits: number,
+}
+export const createMathExercise= (props: CreateMathExerciseProps): MathExercise =>{
+    const generateRandomNumber = props.generateRandomNumber? props.generateRandomNumber: Math.random;
+    const highDigit= props.highDigit;
+    const numberOfDigits= props.numberOfDigits
+    return  new MathExercise({
+        'id': uuidv4(),
+        'symbols': generateSymbols(generateRandomNumber,highDigit, numberOfDigits)
+     });         
+
+}
 
 
 

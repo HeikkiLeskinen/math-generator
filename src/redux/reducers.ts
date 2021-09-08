@@ -1,7 +1,7 @@
 import { Catalogue, Config, Exercise, Storage, SymbolsMap } from '../domain/index';
 import { Actions } from './actions';
 import TYPES from './types';
-import { MathExercise }  from '../domain/mathExercise';
+import { createMathExercise,  MathExercise }  from '../domain/mathExercise';
 import { REHYDRATE } from 'redux-persist';
 
 
@@ -45,7 +45,7 @@ export const gameReducer = (
             if (action.payload){
                 return {
                     ...action.payload,
-                    catalogue: readFromStorage(action.payload.storage, state),
+                    catalogue: readFromStorage(action.payload.storage),
                 }
             }
             else {
@@ -124,7 +124,7 @@ const updateStorage = (catelogue: Catalogue): Storage => {
     }
 }
 
-const readFromStorage = (storage: Storage, state:GameState): Catalogue => {
+const readFromStorage = (storage: Storage): Catalogue => {
 
     if(storage && storage.symbolsById){ // REMOVE ME
 
@@ -134,16 +134,13 @@ const readFromStorage = (storage: Storage, state:GameState): Catalogue => {
             .map((s: SymbolsMap) => new MathExercise({
                 'id': s.id,
                 'symbols': s.symbols,
-                'highDigit':  state.config.highDigit, 
-                'numberOfDigits':  state.config.numberOfDigits
+               
             }));
 
         const exerciseToBeCompleted = storage.symbolsById.filter((s: SymbolsMap) => s.completed === false)
             .map((s: SymbolsMap) => new MathExercise({
                 'id': s.id,
                 'symbols': s.symbols,
-                'highDigit':  state.config.highDigit, 
-                'numberOfDigits':  state.config.numberOfDigits
             }));
         
         return {  
@@ -161,15 +158,16 @@ const readFromStorage = (storage: Storage, state:GameState): Catalogue => {
 }
 
 const generateExercises = (config: Config): Catalogue => {
+    const {numberOfExercises, highDigit, numberOfDigits} = config
+    const exerciseConfig = {highDigit:highDigit, numberOfDigits:numberOfDigits}
     return {
         exercisesCompleted:[],
-        exerciseToBeCompleted: [...Array(config.numberOfExercises)].map((_, i) : Exercise => {
-            return new MathExercise({
-                'id': undefined,
-                'symbols': undefined,
-                'highDigit':  config.highDigit, 
-                'numberOfDigits':  config.numberOfDigits}
-            );            
+        exerciseToBeCompleted: [...Array(numberOfExercises)].map((_, i) : Exercise => {
+            return createMathExercise(exerciseConfig)            
         })
     };
 };
+
+function uuidv4(): string {
+    throw new Error('Function not implemented.');
+}

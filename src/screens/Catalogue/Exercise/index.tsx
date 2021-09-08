@@ -104,7 +104,6 @@ export function ExerciseComponent({exercise , index}: Props) {
       });
     };
 
-    console.log('Exercise', typeof exercise)
     return (
         <Card key={exercise.id}>
         <CardContent
