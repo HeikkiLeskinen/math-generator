@@ -1,9 +1,11 @@
-import { Catalogue, Config, Exercise } from '../domain/index';
-import {Actions} from './actions';
+import { Catalogue, Config, Exercise, Storage, SymbolsMap } from '../domain/index';
+import { Actions } from './actions';
 import TYPES from './types';
-import {MathExercise}  from '../domain/mathExercise';
+import { MathExercise }  from '../domain/mathExercise';
+import { REHYDRATE } from 'redux-persist';
 
-export default function reducer(state = initialState) {}
+
+export default function reducer() {}
 
 export interface GameState {
     score: number;
@@ -11,6 +13,7 @@ export interface GameState {
     config: Config;
     targetReached?: boolean;
     catalogue: Catalogue;
+    storage: Storage;
 }
 
 export const initialState: GameState = {
@@ -23,8 +26,11 @@ export const initialState: GameState = {
         highDigit: 10
     },
     catalogue: {  
-        exercisesCompleted: [],
+        exercisesCompleted:  [],
         exerciseToBeCompleted: []
+    },
+    storage: { 
+        symbolsById: undefined
     }
 }
 
@@ -33,15 +39,29 @@ export const gameReducer = (
     state: GameState = initialState,
     action: Actions,
   ): GameState => {
+
     switch (action.type) {
-        case TYPES.START_GAME:
-            localStorage.setItem('running', 'true');
+        case REHYDRATE: //READ FROM DISK   
+            if (action.payload){
+                return {
+                    ...action.payload,
+                    catalogue: readFromStorage(action.payload.storage, state),
+                }
+            }
+            else {
                 return {
                     ...state,
-                    score: 0,
-                    running: true,
-                    catalogue: generateExercises(state.config)
-           
+                    
+                }
+            }
+        case TYPES.START_GAME:
+            const catalogue = generateExercises(initialState.config)        
+            return {
+                ...state,
+                score: 0,
+                running: true,
+                catalogue: catalogue,
+                storage: updateStorage(catalogue)
             }
         case TYPES.UPDATE_CONFIG:
             return {
@@ -53,37 +73,31 @@ export const gameReducer = (
             }
             case TYPES.SUBMIT_ANSWER:
                 const {id, answer} = action.payload
-                let newCatalogue: Catalogue = state.catalogue;
-                let currentScore: number;
-
-                const exercise: Exercise | undefined = newCatalogue.exerciseToBeCompleted.find(e => e.id === id);
-                    
-                if (exercise){
-                    console.log("Are you and object?", exercise instanceof Object);
-                    console.log("But are you and math-exercise?", exercise instanceof MathExercise);
-                    
-                    if(exercise.solution(answer)){
-                        currentScore = state.score + 1 ;
-                        newCatalogue.exercisesCompleted.push(exercise);
-                        newCatalogue.exerciseToBeCompleted.splice(newCatalogue.exerciseToBeCompleted.findIndex(e => e.id === id), 1);
-                    }
-
-                    else {
-                        currentScore = state.score - 1 ;
-
-                    }
-
-                    // find out a better way to do this, hint: change data structure?
-                    const remainingExercises = newCatalogue.exerciseToBeCompleted.length;
-                    const targetReached = remainingExercises === 0 && 100 * (currentScore / state.config.numberOfExercises) >= state.config.target;
                 
-                    return {
-                        ...state,
-                        score: currentScore,
-                        targetReached: targetReached,
-                        running: true,
-                        catalogue: newCatalogue,
-                    }
+                const exercise = state.catalogue.exerciseToBeCompleted.find(e => e.id === id);
+    
+                if (exercise){      
+                    if (exercise.solution(answer)){
+                     
+                        const catalogue = {
+                            ...state.catalogue,
+                            exercisesCompleted: [...state.catalogue.exercisesCompleted, exercise],
+                            exerciseToBeCompleted: state.catalogue.exerciseToBeCompleted.filter(e => e.id !== id)
+                        }
+
+                        return {
+                            ...state,
+                            score: state.score + 1, 
+                            catalogue: catalogue,  
+                            storage: updateStorage(catalogue)                         
+                        }
+                    } else {
+                        return {
+                            ...state,
+                            score: state.score - 1,
+                            storage: updateStorage(state.catalogue)                                     
+                        }
+                    }                                        
                 } else {
                     return state;
                 }
@@ -93,15 +107,69 @@ export const gameReducer = (
     }
 }
 
+const updateStorage = (catelogue: Catalogue): Storage => {
+    const {exercisesCompleted ,exerciseToBeCompleted } = catelogue;
+
+    const exercisesCompletedMap = exercisesCompleted!.map((e) => (
+        { id: e.id, symbols: (e as MathExercise).symbols, completed: true}
+        )
+    )
+    const exerciseToBeCompletedMap = exerciseToBeCompleted.map((e) => (
+        { id: e.id, symbols: (e as MathExercise).symbols, completed: false}
+        )
+    )
+
+    return {
+        symbolsById: exercisesCompletedMap.concat (exerciseToBeCompletedMap)
+    }
+}
+
+const readFromStorage = (storage: Storage, state:GameState): Catalogue => {
+
+    if(storage && storage.symbolsById){ // REMOVE ME
+
+        // []
+        //  {id: "dced3868-08c6-4325-b363-fd07ebdeac5f", symbols: Array(3), completed: true}
+        const exercisesCompleted: Exercise[] = storage.symbolsById.filter((s: SymbolsMap) => s.completed === true)
+            .map((s: SymbolsMap) => new MathExercise({
+                'id': s.id,
+                'symbols': s.symbols,
+                'highDigit':  state.config.highDigit, 
+                'numberOfDigits':  state.config.numberOfDigits
+            }));
+
+        const exerciseToBeCompleted = storage.symbolsById.filter((s: SymbolsMap) => s.completed === false)
+            .map((s: SymbolsMap) => new MathExercise({
+                'id': s.id,
+                'symbols': s.symbols,
+                'highDigit':  state.config.highDigit, 
+                'numberOfDigits':  state.config.numberOfDigits
+            }));
+        
+        return {  
+            exercisesCompleted:  exercisesCompleted,
+            exerciseToBeCompleted: exerciseToBeCompleted
+        }
+    } else {
+        return {  
+            exercisesCompleted: initialState.catalogue.exercisesCompleted ,
+            exerciseToBeCompleted: initialState.catalogue.exerciseToBeCompleted
+        }
+    }
+
+    
+}
+
 const generateExercises = (config: Config): Catalogue => {
     return {
         exercisesCompleted:[],
-        exerciseToBeCompleted: [...Array(config.numberOfExercises)].map((_, i) => {
-            let exercise = new MathExercise({generateRandomNumber:()=>(Math.random()), 'highDigit':config.highDigit, 'numberOfDigits':config.numberOfDigits});
-            return exercise;
+        exerciseToBeCompleted: [...Array(config.numberOfExercises)].map((_, i) : Exercise => {
+            return new MathExercise({
+                'id': undefined,
+                'symbols': undefined,
+                'highDigit':  config.highDigit, 
+                'numberOfDigits':  config.numberOfDigits}
+            );            
         })
     };
-
-
-
 };

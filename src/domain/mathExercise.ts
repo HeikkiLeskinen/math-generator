@@ -5,7 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 interface Params {
     generateRandomNumber?: Function, 
     highDigit: number,
-    numberOfDigits: number
+    numberOfDigits: number,
+    id?: string,
+    symbols?: string[]
 }
 
 export class MathExercise implements Exercise { 
@@ -15,15 +17,23 @@ export class MathExercise implements Exercise {
     asString
     
     constructor(params : Params = {} as Params) {
-        let {
+        const {
             highDigit,
             numberOfDigits,
-            generateRandomNumber = Math.random
+            generateRandomNumber = Math.random,
+            id = undefined,
+            symbols = undefined,    
         } = params;
 
-        this.id=uuidv4(); 
-        this._generate(generateRandomNumber, highDigit, numberOfDigits);    
-        this.asString = this.toString();       
+        if (id && symbols){
+            this.id = id; 
+            this.symbols = symbols; 
+        } else {
+            this.id = uuidv4(); 
+            this._generate(generateRandomNumber, highDigit, numberOfDigits);                
+        }
+
+        this.asString = this.toString(); // remove me <-            
     }
 
     _generate(generateRandomNumber: Function, highDigit: number, numberOfDigits: number) {

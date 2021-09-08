@@ -74,11 +74,11 @@ const useStyles = makeStyles({
 
 
 export interface Props {
-    exercise: Exercise;
+    exercise: Exercise ;
     index: number;
 }
 
-export function ExerciseComponent({exercise, index}: Props) {
+export function ExerciseComponent({exercise , index}: Props) {
     const classes = useStyles();
     const [value, setValue] = useState<string>('');
 
@@ -104,6 +104,7 @@ export function ExerciseComponent({exercise, index}: Props) {
       });
     };
 
+    console.log('Exercise', typeof exercise)
     return (
         <Card key={exercise.id}>
         <CardContent
@@ -114,7 +115,7 @@ export function ExerciseComponent({exercise, index}: Props) {
             <Container className={classes.exercise}>
               <Box className={classes.calculation}>
                 <Typography variant="h3">
-                  {exercise.asString} = 
+                  {exercise.toString()} =
                 </Typography> 
               </Box>
               <Box className={clsx(classes.answer)}>
@@ -150,4 +151,3 @@ export function ExerciseComponent({exercise, index}: Props) {
       </Card>
     );
 }
-

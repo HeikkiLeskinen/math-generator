@@ -10,7 +10,7 @@ import { ImageListItem } from "@material-ui/core";
 import { Card } from "@material-ui/core";
 import { CardActions } from "@material-ui/core";
 import { CardContent } from "@material-ui/core";
-import { GameState } from "./redux/reducers";
+import { GameState, initialState } from "./redux/reducers";
 import TYPES from "./redux/types";
 import { Catalogue } from "./screens/Catalogue";
 import clsx from "clsx";
@@ -26,7 +26,7 @@ const useStyles = makeStyles({
 function App() {
   const { config, score, targetReached } = useSelector((state: GameState) => {
     return {
-      config: state.config,
+      config: state.config?state.config: initialState.config,
       score: state.score,
       targetReached: state.targetReached !== undefined ? state.targetReached : false
     };

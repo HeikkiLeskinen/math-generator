@@ -1,8 +1,8 @@
 export interface Catalogue {
-    exercisesCompleted: Exercise[]
-    exerciseToBeCompleted: Exercise[]
+    exercisesCompleted: Exercise[] | []
+    exerciseToBeCompleted: Exercise[] |[]
 }
-
+ 
 export enum BaseOperator {
     ADD = '+',
     SUBSTRACT = '-',
@@ -23,6 +23,12 @@ export function randEnumValue<T>(enumObj: T, randomNumberGenerator: Function): T
     const enumVal = Object.values(enumObj);
     const i = Math.floor(randomNumberGenerator() * enumVal.length);
     return enumVal[i];
+}
+
+export type SymbolsMap = { id: string, symbols: string[], completed: Boolean};
+
+export interface Storage {
+    symbolsById: any | undefined
 }
 
 export interface Exercise {
