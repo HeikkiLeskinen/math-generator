@@ -5,16 +5,15 @@ import purple from "@material-ui/core/colors/purple";
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ThemeProvider } from "@material-ui/core";
-
-import { GridList } from "@material-ui/core";
-import { GridListTile } from "@material-ui/core";
+import { ImageList } from "@material-ui/core";
+import { ImageListItem } from "@material-ui/core";
 import { Card } from "@material-ui/core";
 import { CardActions } from "@material-ui/core";
 import { CardContent } from "@material-ui/core";
-import { GameState } from "./redux/reducers";
+import { GameState, initialState } from "./redux/reducers";
 import TYPES from "./redux/types";
 import { Catalogue } from "./screens/Catalogue";
-import clsx from "clsx";
+
 
 const useStyles = makeStyles({
   targetFailed: {
@@ -25,11 +24,10 @@ const useStyles = makeStyles({
 })
 
 function App() {
-  const { config, score, targetReached } = useSelector((state: GameState) => {
+  const { config, score } = useSelector((state: GameState) => {
     return {
-      config: state.config,
+      config: state.config?state.config: initialState.config,
       score: state.score,
-      targetReached: state.targetReached !== undefined ? state.targetReached : false
     };
   });
 
@@ -64,8 +62,7 @@ function App() {
   const settings: SettingProps[] = [
     { label: LABELS[0], value: config.highDigit },
     { label: LABELS[1], value: config.numberOfDigits },
-    { label: LABELS[2], value: config.numberOfExercises },
-    { label: LABELS[3], value: config.target },
+    { label: LABELS[2], value: config.numberOfExercises }
   ];
 
   const isEmpty = (str: string): boolean => {
@@ -127,9 +124,9 @@ function App() {
           >
               <Card>
               <CardContent>
-                <GridList cols={4} spacing={30} cellHeight={"auto"}>
+                <ImageList cols={4} gap={30} rowHeight={"auto"}>
                   {settings.map((setting) => (
-                    <GridListTile cols={1}>
+                    <ImageListItem cols={1}>
                       <CardActions>
                         <TextField
                           label={setting.label}
@@ -148,9 +145,9 @@ function App() {
                           }
                         />
                       </CardActions>
-                    </GridListTile>
+                    </ImageListItem>
                   ))}
-                  <GridListTile cols={1}>
+                  <ImageListItem cols={1}>
                     <CardActions>
                       <Button
                         variant="contained"
@@ -160,23 +157,27 @@ function App() {
                         GENERATE EXERCISE
                       </Button> 
                     </CardActions>
-                  </GridListTile>
-                </GridList>
+                  </ImageListItem>
+                </ImageList>
               </CardContent>
             </Card>
           </Container>
         </Grid>
         <Grid item xs={2}>
-          <table>
 
-            <tr className={clsx({
-              [classes.targetFailed] : targetReached === false
-            })}>
-              <td>Total Score:</td><td>{score}</td>
-            </tr>
-            <tr>
-              <td>Max Score:</td><td>{config.numberOfExercises}</td>
-            </tr>
+          <table>
+            <thead>
+              <tr >
+                <th>Total Score:</th>
+                <th>{score}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Max Score:</td>
+                <td>{config.numberOfExercises}</td>
+              </tr>
+            </tbody>
           </table>
         </Grid>
       </Grid>

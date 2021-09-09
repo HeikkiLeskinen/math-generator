@@ -1,3 +1,4 @@
+import { GameState } from "./reducers";
 import TYPES from "./types";
 
 export type Actions =
@@ -5,7 +6,18 @@ export type Actions =
 | UpdateConfig
 | IncreaseScore
 | GenerateExerices
-| SubmitAnswer;
+| SubmitAnswer
+| Persist
+| Rehydrate
+
+type Persist = {
+    type: 'persist/PERSIST';
+}
+
+type Rehydrate = {
+    type: 'persist/REHYDRATE';
+    readonly payload: GameState;
+}
 
 type StartGame = {
     type: TYPES.START_GAME;

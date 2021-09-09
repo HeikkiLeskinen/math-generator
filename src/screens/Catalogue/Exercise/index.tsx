@@ -11,6 +11,7 @@ import SendIcon from "@material-ui/icons/Send";
 import clsx from "clsx";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Exercise } from "../../../domain";
 import TYPES from "../../../redux/types";
 
 const useStyles = makeStyles({
@@ -71,19 +72,13 @@ const useStyles = makeStyles({
     },
   });
 
-export interface Exercise {
-    id: string;
-    correct?: boolean;
-    operators: Array<string>;
-}
 
 export interface Props {
-    exercise: Exercise;
+    exercise: Exercise ;
     index: number;
 }
 
-export function ExerciseComponent({exercise, index}: Props) {
-
+export function ExerciseComponent({exercise , index}: Props) {
     const classes = useStyles();
     const [value, setValue] = useState<string>('');
 
@@ -109,19 +104,18 @@ export function ExerciseComponent({exercise, index}: Props) {
       });
     };
 
-
     return (
         <Card key={exercise.id}>
         <CardContent
           className={clsx(classes.cardRow, {
-            [classes.inCorrect]: exercise.correct === false,
+            [classes.inCorrect]: exercise.wasLastSubmittedAnswerCorrect === false,
           })}
         >
             <Container className={classes.exercise}>
               <Box className={classes.calculation}>
                 <Typography variant="h3">
-                  {exercise.operators.join(" ")} =
-                </Typography>
+                  {exercise.toString()} =
+                </Typography> 
               </Box>
               <Box className={clsx(classes.answer)}>
                 <TextField
@@ -134,11 +128,11 @@ export function ExerciseComponent({exercise, index}: Props) {
                   InputProps={{
                     className: clsx(classes.input, {
                       [(classes.inCorrect, classes.white)]:
-                        exercise.correct === false,
+                        exercise.wasLastSubmittedAnswerCorrect === false,
                     }),
                     classes: {
                       focused:
-                        exercise.correct === false
+                        exercise.wasLastSubmittedAnswerCorrect === false
                           ? classes.yellow
                           : classes.focused,
                     },
@@ -156,4 +150,3 @@ export function ExerciseComponent({exercise, index}: Props) {
       </Card>
     );
 }
-

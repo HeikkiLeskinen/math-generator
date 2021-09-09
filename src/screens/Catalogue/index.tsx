@@ -1,22 +1,26 @@
-
 import { useSelector } from "react-redux";
+import { MathExercise } from "../../domain/mathExercise";
 import { GameState } from "../../redux/reducers";
-import { ExerciseComponent } from "./Exercise";
 import "./App.css";
+import { ExerciseComponent } from "./Exercise";
 
 export function Catalogue() {
-  const { catalogue } = useSelector((state: GameState) => {
+  const { catalogue  } = useSelector((state: GameState) => {
     return {
-      catalogue: state.catalogue
-    };
+      catalogue: state.catalogue 
+    } ;
   });
 
-  return <div>
-    {catalogue.exercises
-      .filter((e) => e.correct !== true)
-      .map((exercise, index) =>
-        <ExerciseComponent key={exercise.id} exercise={exercise} index={index}/>
-      )
-    }
-    </div>;
+  return catalogue.exerciseToBeCompleted.length> 0 ?
+      <div>
+        {catalogue.exerciseToBeCompleted.map((exercise, index) =>
+          {
+            return <ExerciseComponent
+           key={exercise.id}
+           exercise={exercise}
+          index={index}/>
+         }
+         )
+      }
+    </div> : null; 
 }
