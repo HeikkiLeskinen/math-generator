@@ -163,6 +163,4 @@ const generateExercises = (config: Config): Catalogue => {
     };
 };
 
-function uuidv4(): string {
-    throw new Error('Function not implemented.');
-}
+

@@ -1,5 +1,5 @@
 import "./App.css";
-import { Button, Container, Grid, makeStyles, TextField } from "@material-ui/core";
+import { Button, Container, Grid, makeStyles, Slider, TextField } from "@material-ui/core";
 import { createTheme } from "@material-ui/core/styles";
 import purple from "@material-ui/core/colors/purple";
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,14 +13,15 @@ import { CardContent } from "@material-ui/core";
 import { GameState, initialState } from "./redux/reducers";
 import TYPES from "./redux/types";
 import { Catalogue } from "./screens/Catalogue";
+import Spacer from "./components/Spacer";
+
 
 
 const useStyles = makeStyles({
-  targetFailed: {
-    backgroundColor: "#ef5350",
-    color: "#fff",
-    textShadow: "0 0.0625rem 0 rgb(0 0 0 / 15%)",
-  }
+  slider: {
+    margin: "10px",
+    
+  },
 })
 
 function App() {
@@ -32,8 +33,8 @@ function App() {
   });
 
 
+;
   const classes = useStyles();
-
   const dispatch = useDispatch();
 
   const theme = createTheme({
@@ -122,7 +123,21 @@ function App() {
               paddingTop: "10px",
             }}
           >
+            <Spacer>
               <Card>
+                <CardActions>
+                    <Slider 
+                      className={classes.slider}
+                      marks
+                      defaultValue={0}
+                      min={0}
+                      max={3}
+                    />
+                </CardActions>
+              </Card>
+            </Spacer>
+  
+            <Card>
               <CardContent>
                 <ImageList cols={4} gap={30} rowHeight={"auto"}>
                   {settings.map((setting) => (
@@ -147,6 +162,7 @@ function App() {
                       </CardActions>
                     </ImageListItem>
                   ))}
+
                   <ImageListItem cols={1}>
                     <CardActions>
                       <Button
