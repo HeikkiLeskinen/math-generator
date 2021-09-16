@@ -14,6 +14,7 @@ import { GameState, initialState } from "./redux/reducers";
 import TYPES from "./redux/types";
 import { Catalogue } from "./screens/Catalogue";
 import Spacer from "./components/Spacer";
+import { SetStateAction, useState } from "react";
 
 
 
@@ -108,6 +109,29 @@ function App() {
     }
   };
 
+  const marks = [
+    {
+      value: 1,
+      label: "Lvl 1"
+    },
+    {
+      value: 2,
+      label: "Lvl 2"
+    },
+    {
+      value: 3,
+      label: "Lvl 3"
+    },
+  ];
+
+  const [val, setVal] = useState(0);
+  const onChange = (e: any, newVal: number | number[]) => {
+
+    setVal(newVal as SetStateAction<number>);
+  };
+
+
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -128,10 +152,13 @@ function App() {
                 <CardActions>
                     <Slider 
                       className={classes.slider}
-                      marks
-                      defaultValue={0}
+                      marks={marks}
+                      step={null}
+                      defaultValue={1}
+                      value={val}
                       min={0}
                       max={3}
+                      onChange={(e, val) => onChange(e, val)}
                     />
                 </CardActions>
               </Card>
