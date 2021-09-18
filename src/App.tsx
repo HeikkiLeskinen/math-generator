@@ -26,10 +26,11 @@ const useStyles = makeStyles({
 })
 
 function App() {
-  const { config, score } = useSelector((state: GameState) => {
+  const { config, score, difficulty } = useSelector((state: GameState) => {
     return {
       config: state.config?state.config: initialState.config,
       score: state.score,
+      difficulty: state.difficulty
     };
   });
 
@@ -111,6 +112,10 @@ function App() {
 
   const marks = [
     {
+      value: 0,
+      label: "Lvl 0"
+    },
+    {
       value: 1,
       label: "Lvl 1"
     },
@@ -118,16 +123,15 @@ function App() {
       value: 2,
       label: "Lvl 2"
     },
-    {
-      value: 3,
-      label: "Lvl 3"
-    },
   ];
 
   const [val, setVal] = useState(0);
   const onChange = (e: any, newVal: number | number[]) => {
 
     setVal(newVal as SetStateAction<number>);
+    if (difficulty !== newVal) {
+      dispatch({type: TYPES.UPDATE_DIFFICULTY, payload: { difficulty: newVal }});
+    }
   };
 
 

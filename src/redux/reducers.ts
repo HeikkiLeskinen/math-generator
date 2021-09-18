@@ -9,6 +9,7 @@ export default function reducer() {}
 
 export interface GameState {
     score: number;
+    difficulty: number;
     config: Config;
     catalogue: Catalogue;
     storage: Storage;
@@ -16,6 +17,7 @@ export interface GameState {
 
 export const initialState: GameState = {
     score: 0,
+    difficulty: 0, 
     config: {
         numberOfExercises: 3,
         numberOfDigits: 2,
@@ -51,7 +53,7 @@ export const gameReducer = (
                 }
             }
         case TYPES.START_GAME:
-            const catalogue = generateExercises(state.config)        
+            const catalogue = generateExercises(state.config, state.difficulty)        
             return {
                 ...state,
                 score: 0,
@@ -66,36 +68,43 @@ export const gameReducer = (
                     ...action.payload
                 }
             }
-            case TYPES.SUBMIT_ANSWER:
-                const {id, answer} = action.payload
+        case TYPES.UPDATE_DIFFICULTY:
+            const {difficulty} = action.payload
+            return {
+                ...state,
+                difficulty: difficulty
                 
-                const exercise = state.catalogue.exerciseToBeCompleted.find(e => e.id === id);
-    
-                if (exercise){      
-                    if (exercise.solve(answer)){
-                     
-                        const catalogue = {
-                            ...state.catalogue,
-                            exercisesCompleted: [...state.catalogue.exercisesCompleted, exercise],
-                            exerciseToBeCompleted: state.catalogue.exerciseToBeCompleted.filter(e => e.id !== id)
-                        }
+            }
+        case TYPES.SUBMIT_ANSWER:
+            const {id, answer} = action.payload
+            
+            const exercise = state.catalogue.exerciseToBeCompleted.find(e => e.id === id);
 
-                        return {
-                            ...state,
-                            score: state.score + 1, 
-                            catalogue: catalogue,  
-                            storage: updateStorage(catalogue)                         
-                        }
-                    } else {
-                        return {
-                            ...state,
-                            score: state.score - 1,
-                            storage: updateStorage(state.catalogue)                                     
-                        }
-                    }                                        
+            if (exercise){      
+                if (exercise.solve(answer)){
+                    
+                    const catalogue = {
+                        ...state.catalogue,
+                        exercisesCompleted: [...state.catalogue.exercisesCompleted, exercise],
+                        exerciseToBeCompleted: state.catalogue.exerciseToBeCompleted.filter(e => e.id !== id)
+                    }
+
+                    return {
+                        ...state,
+                        score: state.score + 1, 
+                        catalogue: catalogue,  
+                        storage: updateStorage(catalogue)                         
+                    }
                 } else {
-                    return state;
-                }
+                    return {
+                        ...state,
+                        score: state.score - 1,
+                        storage: updateStorage(state.catalogue)                                     
+                    }
+                }                                        
+            } else {
+                return state;
+            }
 
         default:
             return state;
@@ -152,9 +161,9 @@ const readFromStorage = (storage: Storage): Catalogue => {
     
 }
 
-const generateExercises = (config: Config): Catalogue => {
+const generateExercises = (config: Config, difficulty: number): Catalogue => {
     const {numberOfExercises, highDigit, numberOfDigits} = config
-    const exerciseConfig = {highDigit:highDigit, numberOfDigits:numberOfDigits}
+    const exerciseConfig = {highDigit:highDigit, numberOfDigits:numberOfDigits, difficulty:difficulty}
     return {
         exercisesCompleted:[],
         exerciseToBeCompleted: [...Array(numberOfExercises)].map((_, i) : Exercise => {

@@ -1,11 +1,15 @@
 import { evaluate } from "mathjs";
 import { AdvancedOperator, BaseOperator, Exercise, randEnumValue } from ".";
 import { v4 as uuidv4 } from 'uuid';
+import { getOperatorsByDifficulty, selectRandomOperation } from "../utils/operatorHelpers";
+import { useSelector } from "react-redux";
+import { GameState } from "../redux/reducers";
 
 interface Params {
     id: string,
     symbols: string[]
 }
+
 
 export class MathExercise implements Exercise { 
     id: string;   
@@ -32,8 +36,11 @@ export class MathExercise implements Exercise {
     }
     
 }
+
+
   
-const generateSymbols = (generateRandomNumber: Function, highDigit: number, numberOfDigits: number) => {
+function GenerateSymbols(generateRandomNumber: Function, highDigit: number, numberOfDigits: number, difficulty:number) {
+
     const generateNumber = (operator: BaseOperator | AdvancedOperator, max:number): number => {
         const number = Math.floor(generateRandomNumber() * max)
         return number === 0 && (operator=== '/' || operator=== '*') ? number + 1 : number
@@ -61,8 +68,14 @@ const generateSymbols = (generateRandomNumber: Function, highDigit: number, numb
     let currentString = firstNumber.toString()
     symbols.push(currentString);
 
+
+
     while (currentString.length < 2 * numberOfDigits -1) {
-        let operator = randEnumValue(BaseOperator, generateRandomNumber)
+        //let operator = randEnumValue(BaseOperator, generateRandomNumber)
+
+
+        let operators = getOperatorsByDifficulty(difficulty);
+        let operator = selectRandomOperation(operators);
         let newNumber =  Math.min(currentVal, generateNumber(operator, highDigit));
         currentVal =  calculateNewVal(operator, currentVal, newNumber);
         currentString += operator + newNumber.toString()
@@ -77,17 +90,18 @@ interface CreateMathExerciseProps {
     generateRandomNumber?: Function, 
     highDigit: number,
     numberOfDigits: number,
+    difficulty: number,
 }
 export const createMathExercise= (props: CreateMathExerciseProps): MathExercise =>{
     const generateRandomNumber = props.generateRandomNumber? props.generateRandomNumber: Math.random;
     const highDigit= props.highDigit;
     const numberOfDigits= props.numberOfDigits
+    const difficulty= props.difficulty
     return  new MathExercise({
         'id': uuidv4(),
-        'symbols': generateSymbols(generateRandomNumber,highDigit, numberOfDigits)
+        'symbols': GenerateSymbols(generateRandomNumber,highDigit, numberOfDigits,difficulty)
      });         
 
 }
-
 
 

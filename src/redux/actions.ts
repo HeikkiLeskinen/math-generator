@@ -4,6 +4,7 @@ import TYPES from "./types";
 export type Actions =
 | StartGame
 | UpdateConfig
+| UpdateDifficulty
 | IncreaseScore
 | GenerateExerices
 | SubmitAnswer
@@ -29,6 +30,12 @@ type UpdateConfig = {
         numberOfExercises?: number;
         numberOfDigits?: number;
         highDigit?: number;
+    };
+}
+type UpdateDifficulty = {
+    type: TYPES.UPDATE_DIFFICULTY;
+    readonly payload: {
+        difficulty: number;
     };
 }
 type IncreaseScore = {
