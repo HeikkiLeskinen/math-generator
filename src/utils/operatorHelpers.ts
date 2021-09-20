@@ -13,16 +13,18 @@ export function selectRandomOperation(operations: BaseOperator[]) : BaseOperator
 export function getOperatorsByDifficulty(difficulty: number) : BaseOperator[]{
     let operators : BaseOperator[]
    
-    switch(difficulty){
-        case 1:
-            return operators =  [BaseOperator.ADD ]
-        case 2:
-            return operators =  [BaseOperator.ADD , BaseOperator.SUBSTRACT]
-        case 3:
-            return operators =  [BaseOperator.ADD , BaseOperator.SUBSTRACT , BaseOperator.MULTIPLY]
-        default:
-            return operators= [BaseOperator.ADD]
+    if (difficulty === 2){
+        return operators =  [BaseOperator.ADD , BaseOperator.SUBSTRACT]
+    }
+           
+    else if (difficulty === 3) {
+        return operators =  [BaseOperator.ADD , BaseOperator.SUBSTRACT , BaseOperator.MULTIPLY]
+    }      
 
-    }   
+    else {
+        return operators =  [BaseOperator.ADD ]
+}  
+
+      
 
 }
