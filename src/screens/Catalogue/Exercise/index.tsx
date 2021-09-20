@@ -124,7 +124,7 @@ export function ExerciseComponent({exercise , index}: Props) {
                   name={exercise.id}
                   variant="outlined"
                   onChange={updateAnswer}
-                  onKeyPress={e => handleKeyPress(e, exercise.id)}
+                  onKeyPress={(e) => handleKeyPress(e, exercise.id)}
                   InputProps={{
                     className: clsx(classes.input, {
                       [(classes.inCorrect, classes.white)]:

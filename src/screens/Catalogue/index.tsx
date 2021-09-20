@@ -1,5 +1,4 @@
 import { useSelector } from "react-redux";
-import { MathExercise } from "../../domain/mathExercise";
 import { GameState } from "../../redux/reducers";
 import "./App.css";
 import { ExerciseComponent } from "./Exercise";

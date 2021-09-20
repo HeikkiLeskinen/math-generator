@@ -1,13 +1,18 @@
+
+
 export interface Catalogue {
     exercisesCompleted: Exercise[] | []
     exerciseToBeCompleted: Exercise[] |[]
 }
  
+
 export enum BaseOperator {
     ADD = '+',
     SUBSTRACT = '-',
     MULTIPLY = '*',
 }
+
+
 
 export enum AdvancedOperator {
     ADD= '+',
@@ -19,7 +24,7 @@ export enum AdvancedOperator {
     GREATER='>'
 }
 
-export function randEnumValue<T>(enumObj: T, randomNumberGenerator: Function): T[keyof T] {
+export function randEnumValue<T>(enumObj: T, randomNumberGenerator: Function): T[keyof T] {      
     const enumVal = Object.values(enumObj);
     const i = Math.floor(randomNumberGenerator() * enumVal.length);
     return enumVal[i];

@@ -1,5 +1,5 @@
 import "./App.css";
-import { Button, Container, Grid, makeStyles, TextField } from "@material-ui/core";
+import { Button, Container, Grid, makeStyles, Slider, TextField } from "@material-ui/core";
 import { createTheme } from "@material-ui/core/styles";
 import purple from "@material-ui/core/colors/purple";
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,27 +13,30 @@ import { CardContent } from "@material-ui/core";
 import { GameState, initialState } from "./redux/reducers";
 import TYPES from "./redux/types";
 import { Catalogue } from "./screens/Catalogue";
+import Spacer from "./components/Spacer";
+import { SetStateAction, useState } from "react";
+
 
 
 const useStyles = makeStyles({
-  targetFailed: {
-    backgroundColor: "#ef5350",
-    color: "#fff",
-    textShadow: "0 0.0625rem 0 rgb(0 0 0 / 15%)",
-  }
+  slider: {
+    margin: "10px",
+    
+  },
 })
 
 function App() {
-  const { config, score } = useSelector((state: GameState) => {
+  const { config, score, difficulty } = useSelector((state: GameState) => {
     return {
       config: state.config?state.config: initialState.config,
       score: state.score,
+      difficulty: state.difficulty
     };
   });
 
 
+;
   const classes = useStyles();
-
   const dispatch = useDispatch();
 
   const theme = createTheme({
@@ -107,6 +110,32 @@ function App() {
     }
   };
 
+  const marks = [
+    {
+      value: 0,
+      label: "Lvl 0"
+    },
+    {
+      value: 1,
+      label: "Lvl 1"
+    },
+    {
+      value: 2,
+      label: "Lvl 2"
+    },
+  ];
+
+  const [val, setVal] = useState(0);
+  const onChange = (e: any, newVal: number | number[]) => {
+
+    setVal(newVal as SetStateAction<number>);
+    if (difficulty !== newVal) {
+      dispatch({type: TYPES.UPDATE_DIFFICULTY, payload: { difficulty: newVal }});
+    }
+  };
+
+
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -122,7 +151,24 @@ function App() {
               paddingTop: "10px",
             }}
           >
+            <Spacer>
               <Card>
+                <CardActions>
+                    <Slider 
+                      className={classes.slider}
+                      marks={marks}
+                      step={null}
+                      defaultValue={1}
+                      value={val}
+                      min={0}
+                      max={3}
+                      onChange={(e, val) => onChange(e, val)}
+                    />
+                </CardActions>
+              </Card>
+            </Spacer>
+  
+            <Card>
               <CardContent>
                 <ImageList cols={4} gap={30} rowHeight={"auto"}>
                   {settings.map((setting) => (
@@ -147,6 +193,7 @@ function App() {
                       </CardActions>
                     </ImageListItem>
                   ))}
+
                   <ImageListItem cols={1}>
                     <CardActions>
                       <Button
