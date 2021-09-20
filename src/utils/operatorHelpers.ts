@@ -10,15 +10,15 @@ export function selectRandomOperation(operations: BaseOperator[]) : BaseOperator
 
 
 
-export function getOperatorsByDifficulty(level: number) : BaseOperator[]{
+export function getOperatorsByDifficulty(difficulty: number) : BaseOperator[]{
     let operators : BaseOperator[]
    
-    switch(level){
-        case 0:
-            return operators =  [BaseOperator.ADD ]
+    switch(difficulty){
         case 1:
-            return operators =  [BaseOperator.ADD , BaseOperator.SUBSTRACT]
+            return operators =  [BaseOperator.ADD ]
         case 2:
+            return operators =  [BaseOperator.ADD , BaseOperator.SUBSTRACT]
+        case 3:
             return operators =  [BaseOperator.ADD , BaseOperator.SUBSTRACT , BaseOperator.MULTIPLY]
         default:
             return operators= [BaseOperator.ADD]

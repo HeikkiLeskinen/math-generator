@@ -3,12 +3,12 @@ import {getOperatorsByDifficulty, selectRandomOperation}  from './operatorHelper
 
 describe('operators helper functions', () => {
     
-    it('Difficulty 0 correspond to addition', () => {
-        expect(getOperatorsByDifficulty(0)).toEqual( ["+"]);     
+    it('Difficulty 1 correspond to addition', () => {
+        expect(getOperatorsByDifficulty(1)).toEqual( ["+"]);     
     });
 
-    it('Difficulty 1 correspond to addition', () => {
-        expect(getOperatorsByDifficulty(1)).toEqual( ["+", "-"]);     
+    it('Difficulty 2 correspond to addition', () => {
+        expect(getOperatorsByDifficulty(2)).toEqual( ["+", "-"]);     
     });
 
     it('Difficulty NA correspond to addition', () => {
